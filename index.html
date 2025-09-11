@@ -13,13 +13,13 @@
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            background: linear-gradient(135deg, #f4e1ff, #ffe1e6);
+            background: linear-gradient(135deg, #A3E4D7, #D1F2EB);
             overflow-x: hidden;
         }
         .container {
             text-align: center;
             padding: 2rem;
-            background-color: #fff;
+            background-color: #F7F9F9;
             border-radius: 20px;
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
             max-width: 90%;
@@ -27,22 +27,22 @@
             margin: 1rem;
         }
         h1 {
-            color: #ff6f91;
+            color: #148F77;
             font-size: 2rem;
             margin-bottom: 1rem;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
         }
         p {
             font-size: 1.2rem;
-            color: #333;
+            color: #2C3E50;
             margin: 0.5rem 0;
         }
         #result {
             margin-top: 1.5rem;
             font-size: 1.3rem;
-            color: #4a4a4a;
+            color: #2C3E50;
             font-weight: 700;
-            background-color: #fff0f5;
+            background-color: #E8F8F5;
             padding: 1rem;
             border-radius: 10px;
             animation: fadeIn 0.5s ease-in forwards;
@@ -67,7 +67,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>🌟 Hành Trình Của Hana 🌟</h1>
+        <h1>🌟 Hành Trình Của Bé 🌟</h1>
         <p>Ngày sinh bé yêu: <strong>17:35, 29/01/2025</strong> 💕</p>
         <div id="result"></div>
     </div>
@@ -75,7 +75,7 @@
     <script>
         window.onload = function() {
             const birthdate = new Date('2025-01-29T17:35:00+07:00');
-            const today = new Date('2025-09-11T19:00:00+07:00'); // Cập nhật thời gian
+            const today = new Date('2025-09-11T19:10:00+07:00'); // Cập nhật thời gian
             const timeDiff = today - birthdate;
             const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
 
