@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌟 Hành Trình Của Bé 🌟</title>
+    <title>🌟 Hana's Journey 🌟</title>
     <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -67,23 +67,23 @@
 </head>
 <body>
     <div class="container">
-        <h1>🌟 Hành Trình Của Bé 🌟</h1>
-        <p>Ngày sinh bé yêu: <strong>17:35, 29/01/2025</strong> 💕</p>
+        <h1>🌟 Hana's Journey 🌟</h1>
+        <p>Hana's birthdate: <strong>17:35, 29/01/2025</strong> 💕</p>
         <div id="result"></div>
     </div>
 
     <script>
         window.onload = function() {
             const birthdate = new Date('2025-01-29T17:35:00+07:00');
-            const today = new Date('2025-09-11T19:10:00+07:00'); // Cập nhật thời gian
+            const today = new Date('2025-09-11T19:14:00+07:00'); // Updated time
             const timeDiff = today - birthdate;
             const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
 
             const resultDiv = document.getElementById('result');
             if (daysDiff < 0) {
-                resultDiv.innerText = 'Hihi, ngày sinh không hợp lệ nha! 😜';
+                resultDiv.innerText = 'Oops, the birthdate seems invalid! 😜';
             } else {
-                resultDiv.innerText = `Bé yêu đã được ${daysDiff} ngày tuổi rồi! 🎈`;
+                resultDiv.innerText = `Hana is ${daysDiff} days old already! 🎈`;
             }
         };
     </script>
