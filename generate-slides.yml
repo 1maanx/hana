@@ -1,0 +1,48 @@
+name: Generate slides.json
+
+on:
+  push:
+    paths:
+      - "images/slides/**"
+      - ".github/workflows/generate-slides.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate slides.json
+        run: |
+          python3 - << 'PY'
+          import os, json
+
+          folder = "images/slides"
+          exts = {".jpg", ".jpeg", ".png", ".webp", ".gif"}
+
+          files = []
+          if os.path.isdir(folder):
+            for f in sorted(os.listdir(folder)):
+              if os.path.splitext(f.lower())[1] in exts and not f.lower().startswith("placeholder."):
+                files.append(f"{folder}/{f}")
+
+          with open("slides.json", "w", encoding="utf-8") as fp:
+            json.dump(files, fp, ensure_ascii=False, indent=2)
+
+          print("Generated slides.json with", len(files), "slides")
+          PY
+
+      - name: Commit slides.json
+        run: |
+          if git status --porcelain | grep -q "slides.json"; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add slides.json
+            git commit -m "Auto-generate slides.json"
+            git push
+          else
+            echo "No changes"
+          fi
