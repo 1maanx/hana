@@ -342,6 +342,26 @@ let idx = 0;
 let timer = null;
 let paused = false;
 
+/* Preload cache to avoid re-requesting the same URLs */
+const preloaded = new Set();
+function preloadImage(url){
+  if(!url || preloaded.has(url)) return;
+  preloaded.add(url);
+  const img = new Image();
+  img.decoding = 'async';
+  img.loading = 'eager';
+  img.src = url;
+}
+
+function preloadNeighbors(centerIndex){
+  if(slides.length <= 1) return;
+  const c = (centerIndex + slides.length) % slides.length;
+  const prevIndex = (c - 1 + slides.length) % slides.length;
+  const nextIndex = (c + 1) % slides.length;
+  preloadImage(slides[prevIndex]);
+  preloadImage(slides[nextIndex]);
+}
+
 function setPaused(state){
   paused = state;
   if(paused){
@@ -375,11 +395,18 @@ function updateDots(){
 
 function showSlide(i){
   if(!slides.length) return;
+
+  const iNorm = (i + slides.length) % slides.length;
+
   slideImg.style.opacity = '0';
   setTimeout(() => {
-    slideImg.src = slides[i];
+    slideImg.src = slides[iNorm];
     slideImg.onload = () => { slideImg.style.opacity = '1'; };
   }, 160);
+
+  // Preload prev & next for smoother swipe/auto
+  preloadNeighbors(iNorm);
+
   updateDots();
 }
 
@@ -404,15 +431,19 @@ function startAuto(){
 
 async function loadSlides(){
   try{
-    const res = await fetch('./slides.json', { cache: 'no-store' });
+    // ✅ changed no-store -> default (allow browser caching)
+    const res = await fetch('./slides.json', { cache: 'default' });
     if(!res.ok) throw new Error('slides.json not found');
     const data = await res.json();
     if(!Array.isArray(data) || data.length === 0) throw new Error('slides.json empty');
 
     slides = data;
     idx = 0;
+
+    // Show first slide, then preload neighbors
     slideImg.src = slides[0];
     renderDots();
+    preloadNeighbors(0);
     startAuto();
   }catch(e){
     console.warn(e);
@@ -467,6 +498,8 @@ const lbCaption = document.getElementById('lbCaption');
 function showLightboxImage(){
   lbImg.src = slides[idx];
   lbCaption.textContent = slides.length > 1 ? `Photo ${idx+1} / ${slides.length}` : '';
+  // Preload neighbors while in lightbox too
+  preloadNeighbors(idx);
 }
 
 function openLightbox(){
