@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>🌟 Hana's Journey 🌟</title>
+  <title>Hana's Journey</title>
 
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet" />
 
@@ -15,7 +15,6 @@
     *{ box-sizing:border-box; }
 
     body{
-      font-family: 'Quicksand', 'Comic Neue', cursive;
       margin:0;
       min-height:100vh;
       font-family:'Quicksand', system-ui, -apple-system, BlinkMacSystemFont;
@@ -40,6 +39,7 @@
       padding:14px 14px 18px;
     }
 
+    /* Header inside card (title only now) */
     .card-header{
       text-align:center;
       padding:8px 6px 14px;
@@ -50,17 +50,14 @@
       color:var(--accent);
       font-weight:700;
     }
-    .card-header .meta{
-      margin:0;
-      font-size:1.05rem;
-      opacity:.85;
-    }
 
+    /* ===== 1-col mobile default ===== */
     .layout{ display:block; }
 
+    /* Slider */
     .slider{
       width:100%;
-      aspect-ratio:4/3;
+      aspect-ratio:4/3;         /* mobile/tablet */
       border-radius:16px;
       overflow:hidden;
       background:#eee;
@@ -79,6 +76,7 @@
       -webkit-user-drag:none;
     }
 
+    /* Dots */
     .dots{
       position:absolute;
       left:0; right:0;
@@ -101,6 +99,18 @@
       background:rgba(255,255,255,.95);
     }
 
+    /* Birthdate line in same style block as age */
+    .birthline{
+      margin-top:10px;
+      margin-bottom:10px;
+      padding:12px;
+      background:var(--soft);
+      border-radius:12px;
+      font-weight:600;
+      font-size:1.2rem;
+      opacity:.95;
+    }
+
     #result,#subresult{
       margin-top:10px;
       padding:12px;
@@ -109,8 +119,7 @@
       font-weight:600;
     }
     #result{ font-size:1.2rem; }
-    #subresult{ font-size:1rem; opacity:.9; }
-    .big{ font-size:1.8rem; font-weight:700; }
+    #subresult{ font-size:1.2rem; opacity:.9; }
 
     .progress{ margin-top:14px; }
     .progress-label{ font-size:.9rem; opacity:.75; margin-bottom:4px; }
@@ -128,6 +137,7 @@
       transition:width .4s ease;
     }
 
+    /* ===== Desktop: 2 columns + 16:9 slider + better spacing ===== */
     @media (min-width: 1024px){
       .layout{
         display:grid;
@@ -136,11 +146,20 @@
         align-items:start;
       }
       .slider{
-        aspect-ratio:16/9;
+        aspect-ratio:16/9;      /* PC album look */
         margin-bottom:0;
       }
-      .right #result,
-      .right #subresult{
+
+      /* spacing between blocks on the right */
+      .right > *{
+        margin-bottom:12px;
+      }
+      .right > *:last-child{
+        margin-bottom:0;
+      }
+
+      /* birthline doesn't need extra top spacing on PC */
+      .birthline{
         margin-top:0;
       }
     }
@@ -208,10 +227,8 @@
 <body>
 <div class="app">
   <main class="card">
-
     <header class="card-header">
-      <h1>Hana's Journey</h1>
-      <p class="meta">Birthdate: <strong>17:34, 29/01/2025 💕</strong></p>
+      <h1>🌟 Hana's Journey 🌟</h1><hr>
     </header>
 
     <div class="layout">
@@ -223,6 +240,10 @@
       </div>
 
       <div class="right">
+        <div class="birthline" id="birthline">
+          Birthdate: <strong>17:34, 29/01/2025 💕</strong>
+        </div>
+
         <div id="result"></div>
         <div id="subresult"></div>
 
@@ -232,7 +253,6 @@
         </div>
       </div>
     </div>
-
   </main>
 </div>
 
@@ -247,7 +267,7 @@
 
 <script>
 /* ===== Age ===== */
-const birth = new Date('2025-01-29T17:35:00+07:00');
+const birth = new Date('2025-01-29T17:34:00+07:00'); // match Birthdate line
 const resultDiv = document.getElementById('result');
 const subDiv = document.getElementById('subresult');
 const barFill = document.getElementById('barFill');
@@ -278,8 +298,8 @@ function updateAge(){
   const days=daysBetween(birth,now);
   const md=monthsAndDays(birth,now);
 
-  resultDiv.innerHTML=`Hana is <span class="big">${days}</span> days old 🎈`;
-  subDiv.textContent=`${md.months} months and ${md.days} days 🧸`;
+  resultDiv.innerHTML=`Hana is <strong>${days}</strong> days old 🎈`;
+  subDiv.textContent=`${md.months} months and ${md.days} days 🎈`;
 
   const next=nextMonth(birth,now);
   const prev=new Date(next); prev.setMonth(prev.getMonth()-1);
@@ -396,14 +416,11 @@ function closeLightbox(){
   document.body.classList.remove('noscroll');
 }
 
-/* open by tap/click slider */
-slider.addEventListener('click', ()=> openLightbox());
+slider.addEventListener('click', openLightbox);
 
-/* close */
 lbClose.addEventListener('click', closeLightbox);
 lightbox.addEventListener('click', (e)=>{ if(e.target===lightbox) closeLightbox(); });
 
-/* keyboard */
 document.addEventListener('keydown',(e)=>{
   if(!lightbox.classList.contains('open')) return;
   if(e.key==='Escape') closeLightbox();
