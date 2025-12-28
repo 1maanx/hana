@@ -8,20 +8,19 @@
   <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet" />
 
   <style>
-    :root {
+    :root{
       --bg1:#a3e4d7; --bg2:#d1f2eb; --card:#f7f9f9;
       --ink:#2c3e50; --accent:#148f77;
       --soft:#e8f8f5; --pill:#d6efe9;
     }
-
     *{box-sizing:border-box}
     body{
       margin:0; min-height:100vh;
       display:grid; place-items:center;
       font-family:'Quicksand','Comic Neue',cursive;
       background:linear-gradient(135deg,var(--bg1),var(--bg2));
+      overflow-x:hidden;
     }
-
     .container{
       width:min(480px,92vw);
       background:var(--card);
@@ -30,33 +29,65 @@
       text-align:center;
       box-shadow:0 10px 24px rgba(0,0,0,.15);
       border:2px solid #ecf9f6;
+      overflow:hidden;
     }
-
-    h1{margin:0 0 .4rem;color:var(--accent)}
-    .meta{margin:0 0 .6rem;color:var(--ink)}
-    .badge{
-      display:inline-flex;gap:.4rem;
-      padding:.35rem .7rem;
-      border-radius:999px;
-      background:var(--pill);
-      font-weight:600;color:var(--accent);
+    h1{
+      margin:0 0 .4rem;
+      color:var(--accent);
+      font-size:clamp(1.6rem,3.4vw + 1rem,2.2rem);
+      text-shadow:0 1px 0 rgba(0,0,0,0.06);
     }
+    .meta{margin:0 0 .9rem;color:var(--ink);font-size:1.05rem}
 
-    /* Slider */
+    /* ===== Slider ===== */
     .slider{
-      margin:1rem auto;
-      width:100%; aspect-ratio:4/3;
+      margin: .2rem auto 0.2rem;
+      width:100%;
+      aspect-ratio:4/3;
       border-radius:18px;
       overflow:hidden;
       background:#eefaf7;
       box-shadow:0 6px 16px rgba(0,0,0,.12);
       position:relative;
+      user-select:none;
+      touch-action:pan-y; /* allow vertical scroll, but handle horizontal swipe */
     }
     .slider img{
       width:100%; height:100%;
       object-fit:cover;
-      transition:opacity .45s ease;
       display:block;
+      opacity:1;
+      transition:opacity .35s ease;
+      -webkit-user-drag:none;
+    }
+
+    .dots{
+      display:flex;
+      justify-content:center;
+      gap:.45rem;
+      margin:.6rem 0 0.2rem;
+    }
+    .dot{
+      width:10px;height:10px;
+      border-radius:999px;
+      border:0;
+      background:#cfeee7;
+      cursor:pointer;
+      padding:0;
+      transition:transform .12s ease, opacity .12s ease;
+      opacity:.8;
+    }
+    .dot[aria-current="true"]{
+      background:#55c6b0;
+      opacity:1;
+      transform:scale(1.15);
+    }
+
+    .helper{
+      margin:.25rem 0 0.6rem;
+      font-size:.9rem;
+      color:#456;
+      opacity:.85;
     }
 
     #result,#subresult{
@@ -66,13 +97,14 @@
       border-radius:12px;
       font-weight:700;
       color:var(--ink);
+      animation:fadeIn .6s ease-out both;
     }
     #result{font-size:1.35rem}
     #subresult{font-size:1.1rem;opacity:.95}
-    .big{font-size:2rem}
+    .big{font-size:2rem;letter-spacing:.5px}
 
     .progress{margin-top:1rem;text-align:left}
-    .progress-label{font-size:.9rem;margin-bottom:.35rem}
+    .progress-label{font-size:.9rem;color:#456;margin-bottom:.35rem}
     .bar{
       height:12px;
       background:#e9f7f3;
@@ -80,132 +112,266 @@
       overflow:hidden;
     }
     .bar span{
-      height:100%; display:block;
+      height:100%;display:block;
       background:linear-gradient(90deg,#8fd3c6,#55c6b0);
-      width:0%; transition:width .8s ease;
+      width:0%;
+      transition:width .8s ease;
     }
 
     /* Balloons */
-    .balloons{position:fixed;inset:0;pointer-events:none}
+    .balloons{position:fixed;inset:0;pointer-events:none;overflow:hidden}
     .balloon{
       position:absolute;bottom:-120px;
       font-size:26px;opacity:.85;
+      filter: drop-shadow(0 6px 6px rgba(0,0,0,.12));
     }
     @keyframes rise{
-      to{transform:translateY(-110vh);opacity:1}
+      to{transform:translateY(-110vh) rotate(6deg);opacity:.95}
     }
-
+    @keyframes fadeIn{
+      from{opacity:0;transform:translateY(10px)}
+      to{opacity:1;transform:translateY(0)}
+    }
     @media(max-width:600px){
       #result{font-size:1.2rem}
       #subresult{font-size:1rem}
+      .slider{border-radius:16px}
     }
   </style>
 </head>
 <body>
 
-<div class="balloons" id="balloons"></div>
+<div class="balloons" id="balloons" aria-hidden="true"></div>
 
-<main class="container">
+<main class="container" role="main" aria-live="polite">
   <h1>🌟 Hana's Journey 🌟</h1>
   <p class="meta">Hana's birthdate: <strong>17:35, 29/01/2025</strong> 💕</p>
-  <span class="badge">⏰ Now: <span id="nowText">—</span></span>
 
-  <!-- Slider -->
-  <div class="slider">
-    <img id="slideImage" alt="Hana memory" loading="lazy">
+  <div class="slider" id="slider" aria-label="Hana photo memories">
+    <img id="slideImage" alt="Hana memory" loading="lazy" decoding="async">
   </div>
+
+  <div class="dots" id="dots" aria-label="Slide dots"></div>
+  <div class="helper">Swipe left/right on mobile, or tap dots 🫶</div>
 
   <div id="result">Calculating…</div>
   <div id="subresult"></div>
 
   <div class="progress">
-    <div class="progress-label" id="progressLabel"></div>
+    <div class="progress-label" id="progressLabel">Progress to next month: 0%</div>
     <div class="bar"><span id="barFill"></span></div>
   </div>
 </main>
 
 <script>
-/* ===== Date logic ===== */
+/* ===== Age logic ===== */
 const birth = new Date('2025-01-29T17:35:00+07:00');
-const nowText = document.getElementById('nowText');
 const resultDiv = document.getElementById('result');
 const subDiv = document.getElementById('subresult');
 const barFill = document.getElementById('barFill');
 const progressLabel = document.getElementById('progressLabel');
 
-const pad = n => String(n).padStart(2,'0');
-const daysBetween=(a,b)=>Math.floor((b-a)/86400000);
+function daysBetween(a,b){ return Math.floor((b-a)/86400000); }
 
 function monthsAndDays(from,to){
-  let y=to.getFullYear(), m=to.getMonth();
-  let months=(y-from.getFullYear())*12+(m-from.getMonth());
-  let days=to.getDate()-from.getDate();
-  if(days<0){
-    months--;
-    const prev=new Date(y,m,0);
-    days=prev.getDate()+days;
+  // calendar-ish months/days (keeps your original spirit, simple + stable)
+  let months = (to.getFullYear()-from.getFullYear())*12 + (to.getMonth()-from.getMonth());
+  let days = to.getDate() - from.getDate();
+  if(days < 0){
+    months -= 1;
+    const prevMonthLastDay = new Date(to.getFullYear(), to.getMonth(), 0).getDate();
+    days = prevMonthLastDay + days;
   }
-  return{months,days};
+  return { months, days };
 }
 
-function nextMonthAnniversary(base,now){
-  let y=now.getFullYear(),m=now.getMonth();
-  let d=Math.min(base.getDate(),new Date(y,m+1,0).getDate());
-  let cand=new Date(y,m,d,base.getHours(),base.getMinutes());
-  if(cand<=now) cand=new Date(y,m+1,d,base.getHours(),base.getMinutes());
+function nextMonthAnniversary(base, now){
+  let y = now.getFullYear();
+  let m = now.getMonth();
+  const d = Math.min(base.getDate(), new Date(y, m+1, 0).getDate());
+  let cand = new Date(y, m, d, base.getHours(), base.getMinutes(), 0, 0);
+  if(cand <= now){
+    const y2 = (m === 11) ? y+1 : y;
+    const m2 = (m+1) % 12;
+    const d2 = Math.min(base.getDate(), new Date(y2, m2+1, 0).getDate());
+    cand = new Date(y2, m2, d2, base.getHours(), base.getMinutes(), 0, 0);
+  }
   return cand;
 }
 
-function update(){
-  const now=new Date();
-  nowText.textContent=`${pad(now.getHours())}:${pad(now.getMinutes())}, ${pad(now.getDate())}/${pad(now.getMonth()+1)}/${now.getFullYear()}`;
+function updateAge(){
+  const now = new Date();
+  const totalDays = daysBetween(birth, now);
+  const { months, days } = monthsAndDays(birth, now);
 
-  const totalDays=daysBetween(birth,now);
-  const {months,days}=monthsAndDays(birth,now);
-
-  resultDiv.innerHTML=`Hana is <span class="big">${totalDays}</span> days old! 🎈`;
-  subDiv.innerHTML=`That's <strong>${months}</strong> months and <strong>${days}</strong> days. 🧸`;
-
-  const next=nextMonthAnniversary(birth,now);
-  const prev=new Date(next); prev.setMonth(prev.getMonth()-1);
-  const pct=Math.round(((now-prev)/(next-prev))*100);
-  barFill.style.width=pct+'%';
-  progressLabel.textContent=`Progress to next month: ${pct}%`;
-}
-
-/* ===== Slider ===== */
-const slideImg=document.getElementById('slideImage');
-let slides=[],idx=0;
-
-async function loadSlides(){
-  try{
-    const r=await fetch('./slides.json',{cache:'no-store'});
-    slides=await r.json();
-    slideImg.src=slides[0];
-    setInterval(()=>{idx=(idx+1)%slides.length;slideImg.style.opacity=0;
-      setTimeout(()=>{slideImg.src=slides[idx];slideImg.style.opacity=1},200);
-    },4000);
-  }catch{
-    slideImg.src='images/slides/placeholder.jpg';
+  if(totalDays < 0){
+    resultDiv.textContent = 'Oops, the birthdate seems invalid! 😜';
+    subDiv.textContent = '';
+    return;
   }
+
+  resultDiv.innerHTML = `Hana is <span class="big">${totalDays}</span> days old! 🎈`;
+  subDiv.innerHTML = `That's <strong>${months}</strong> months and <strong>${days}</strong> days. 🧸`;
+
+  // progress to next month milestone
+  const next = nextMonthAnniversary(birth, now);
+  const prev = new Date(next);
+  prev.setMonth(prev.getMonth() - 1);
+
+  const span = next - prev;
+  const passed = now - prev;
+  const pct = Math.max(0, Math.min(100, Math.round((passed / span) * 100)));
+  barFill.style.width = pct + '%';
+  progressLabel.textContent = `Progress to next month: ${pct}%`;
 }
 
 /* ===== Balloons ===== */
-const wrap=document.getElementById('balloons');
-function pop(count=10){
+const balloonWrap = document.getElementById('balloons');
+function popBalloons(count = 10){
   for(let i=0;i<count;i++){
-    const b=document.createElement('span');
-    b.className='balloon';
-    b.textContent=['🎈','💖','🧸','🎀'][Math.random()*4|0];
-    b.style.left=Math.random()*100+'vw';
-    b.style.animation=`rise ${5+Math.random()*5}s linear forwards`;
-    wrap.appendChild(b);
-    setTimeout(()=>b.remove(),7000);
+    const b = document.createElement('span');
+    b.className = 'balloon';
+    b.style.left = Math.random()*100 + 'vw';
+    b.style.animation = `rise ${5 + Math.random()*6}s ease-in forwards`;
+    b.textContent = ['🎈','🎀','💚','💛','💖','🧸'][Math.floor(Math.random()*6)];
+    balloonWrap.appendChild(b);
+    setTimeout(()=>b.remove(), 7000);
   }
 }
 
-update(); loadSlides(); pop(12);
-setInterval(update,30000);
+/* ===== Slider (dots + swipe) ===== */
+const slider = document.getElementById('slider');
+const slideImg = document.getElementById('slideImage');
+const dotsWrap = document.getElementById('dots');
+
+let slides = [];
+let idx = 0;
+let timer = null;
+let paused = false;
+
+function setPaused(state){
+  paused = state;
+  if(paused){
+    if(timer) clearInterval(timer);
+    timer = null;
+  }else{
+    startAuto();
+  }
+}
+
+function renderDots(){
+  dotsWrap.innerHTML = '';
+  slides.forEach((_, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'dot';
+    btn.type = 'button';
+    btn.setAttribute('aria-label', `Go to slide ${i+1}`);
+    btn.setAttribute('aria-current', String(i === idx));
+    btn.addEventListener('click', () => goTo(i, true));
+    dotsWrap.appendChild(btn);
+  });
+}
+
+function updateDots(){
+  const dots = dotsWrap.querySelectorAll('.dot');
+  dots.forEach((d, i) => d.setAttribute('aria-current', String(i === idx)));
+}
+
+function showSlide(i){
+  if(!slides.length) return;
+  slideImg.style.opacity = '0';
+  setTimeout(() => {
+    slideImg.src = slides[i];
+    // fade in once image is ready
+    slideImg.onload = () => { slideImg.style.opacity = '1'; };
+  }, 160);
+  updateDots();
+}
+
+function goTo(i, userAction=false){
+  if(!slides.length) return;
+  idx = (i + slides.length) % slides.length;
+  showSlide(idx);
+  if(userAction){
+    // restart auto timer so it doesn't instantly jump again
+    startAuto();
+    popBalloons(4);
+  }
+}
+
+function next(){ if(!paused) goTo(idx+1); }
+function prev(){ if(!paused) goTo(idx-1); }
+
+function startAuto(){
+  if(timer) clearInterval(timer);
+  if(slides.length <= 1) return;
+  timer = setInterval(() => { if(!paused) next(); }, 4000);
+}
+
+async function loadSlides(){
+  try{
+    const res = await fetch('./slides.json', { cache: 'no-store' });
+    if(!res.ok) throw new Error('slides.json not found');
+    const data = await res.json();
+    if(!Array.isArray(data) || data.length === 0) throw new Error('slides.json empty');
+
+    slides = data;
+    idx = 0;
+    slideImg.src = slides[0];
+    renderDots();
+    startAuto();
+  }catch(e){
+    console.warn(e);
+    slides = ['images/slides/placeholder.jpg'];
+    idx = 0;
+    slideImg.src = slides[0];
+    renderDots();
+  }
+}
+
+/* Swipe / drag handling */
+let startX = 0;
+let deltaX = 0;
+let dragging = false;
+
+function onStart(clientX){
+  dragging = true;
+  startX = clientX;
+  deltaX = 0;
+  setPaused(true);
+}
+function onMove(clientX){
+  if(!dragging) return;
+  deltaX = clientX - startX;
+}
+function onEnd(){
+  if(!dragging) return;
+  dragging = false;
+
+  const threshold = Math.max(40, Math.floor(slider.clientWidth * 0.12)); // responsive
+  if(deltaX <= -threshold) next();
+  else if(deltaX >= threshold) prev();
+
+  setPaused(false);
+}
+
+slider.addEventListener('touchstart', (e) => onStart(e.touches[0].clientX), { passive:true });
+slider.addEventListener('touchmove',  (e) => onMove(e.touches[0].clientX),  { passive:true });
+slider.addEventListener('touchend',   () => onEnd(), { passive:true });
+
+slider.addEventListener('mousedown', (e) => { onStart(e.clientX); e.preventDefault(); });
+window.addEventListener('mousemove', (e) => onMove(e.clientX));
+window.addEventListener('mouseup',   () => onEnd());
+
+slider.addEventListener('mouseenter', () => setPaused(true));
+slider.addEventListener('mouseleave', () => setPaused(false));
+
+/* Kick off */
+updateAge();
+setInterval(updateAge, 30000); // keep age/progress fresh
+popBalloons(12);
+loadSlides();
 </script>
+
 </body>
 </html>
