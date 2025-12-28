@@ -13,25 +13,23 @@
       --ink:#2c3e50; --accent:#148f77; --soft:#e8f8f5;
     }
     *{ box-sizing:border-box; }
-
+    html,body{ height:100%; margin:0; }
     body{
-      margin:0;
       min-height:100vh;
       font-family:'Quicksand', system-ui, -apple-system, BlinkMacSystemFont;
       background:linear-gradient(135deg,var(--bg1),var(--bg2));
+      color:var(--ink);
       overflow-x:hidden;
-
-      padding: max(14px, env(safe-area-inset-top)) 12px
-               max(16px, env(safe-area-inset-bottom));
-      color: var(--ink);
+      padding:max(14px, env(safe-area-inset-top)) 12px max(16px, env(safe-area-inset-bottom));
     }
 
-    .app{
-      width:100%;
-      max-width: clamp(520px, 80vw, 900px);
-      margin:0 auto;
+    /* Center card on PC */
+    @media (min-width:768px){
+      body{ display:flex; align-items:center; justify-content:center; padding:24px; }
+      .app{ margin:0; }
     }
 
+    .app{ width:100%; max-width:clamp(520px, 80vw, 900px); margin:0 auto; }
     .card{
       background:var(--card);
       border-radius:22px;
@@ -39,25 +37,34 @@
       padding:14px 14px 18px;
     }
 
-    /* Header inside card (title only now) */
-    .card-header{
-      text-align:center;
-      padding:8px 6px 14px;
-    }
+    .card-header{ text-align:center; padding:8px 6px 14px; }
     .card-header h1{
-      margin:4px 0 6px;
+      margin:4px 0 10px;
       font-size:clamp(1.6rem, 3vw + 1rem, 2.2rem);
       color:var(--accent);
       font-weight:700;
     }
+    .card-header hr{ border:0; height:1px; background:rgba(44,62,80,.12); margin:0; }
 
-    /* ===== 1-col mobile default ===== */
+    /* Layout */
     .layout{ display:block; }
+    @media (min-width:1024px){
+      .layout{
+        display:grid;
+        grid-template-columns:1.15fr .85fr;
+        gap:16px;
+        align-items:start;
+      }
+      .slider{ aspect-ratio:16/9; margin-bottom:0; }
+      .right > *{ margin-bottom:12px; }
+      .right > *:last-child{ margin-bottom:0; }
+      .birthline{ margin-top:0; }
+    }
 
     /* Slider */
     .slider{
       width:100%;
-      aspect-ratio:4/3;         /* mobile/tablet */
+      aspect-ratio:4/3;
       border-radius:16px;
       overflow:hidden;
       background:#eee;
@@ -65,7 +72,7 @@
       margin-bottom:12px;
       user-select:none;
       touch-action:pan-y;
-      cursor: zoom-in;
+      cursor:zoom-in;
     }
     .slider img{
       width:100%;
@@ -79,89 +86,43 @@
     /* Dots */
     .dots{
       position:absolute;
-      left:0; right:0;
-      bottom:10px;
+      left:0; right:0; bottom:10px;
       display:flex;
       justify-content:center;
       gap:.45rem;
       padding:0 10px;
-      pointer-events:auto;
     }
     .dot{
-      width:9px;height:9px;
-      border-radius:50%;
+      width:9px; height:9px;
+      border-radius:999px;
       border:0;
       background:rgba(255,255,255,.55);
       cursor:pointer;
       padding:0;
     }
-    .dot[aria-current="true"]{
-      background:rgba(255,255,255,.95);
-    }
+    .dot[aria-current="true"]{ background:rgba(255,255,255,.95); }
 
-    /* Birthdate line in same style block as age */
-    .birthline{
-      margin-top:10px;
-      margin-bottom:10px;
-      padding:12px;
-      background:var(--soft);
-      border-radius:12px;
-      font-weight:600;
-      font-size:1.2rem;
-      opacity:.95;
-    }
-
-    #result,#subresult{
+    /* Right blocks */
+    .birthline,#result,#subresult{
       margin-top:10px;
       padding:12px;
       background:var(--soft);
       border-radius:12px;
       font-weight:600;
     }
+    .birthline{ margin-bottom:10px; font-size:1.2rem; opacity:.95; }
     #result{ font-size:1.2rem; }
     #subresult{ font-size:1.2rem; opacity:.9; }
 
     .progress{ margin-top:14px; }
     .progress-label{ font-size:.9rem; opacity:.75; margin-bottom:4px; }
-    .bar{
-      height:10px;
-      background:#e6e8eb;
-      border-radius:999px;
-      overflow:hidden;
-    }
+    .bar{ height:10px; background:#e6e8eb; border-radius:999px; overflow:hidden; }
     .bar span{
       height:100%;
       display:block;
       background:linear-gradient(90deg,#8fd3c6,#55c6b0);
       width:0%;
       transition:width .4s ease;
-    }
-
-    /* ===== Desktop: 2 columns + 16:9 slider + better spacing ===== */
-    @media (min-width: 1024px){
-      .layout{
-        display:grid;
-        grid-template-columns: 1.15fr 0.85fr;
-        gap:16px;
-        align-items:start;
-      }
-      .slider{
-        aspect-ratio:16/9;      /* PC album look */
-        margin-bottom:0;
-      }
-
-      /* spacing between blocks on the right */
-      .right > *{
-        margin-bottom:12px;
-      }
-      .right > *:last-child{
-        margin-bottom:0;
-      }
-
-      /* birthline doesn't need extra top spacing on PC */
-      .birthline{
-        margin-top:0;
-      }
     }
 
     /* Lightbox */
@@ -185,7 +146,6 @@
       align-items:center;
       justify-content:center;
     }
-
     .lightbox img{
       max-width:100%;
       max-height:90vh;
@@ -196,20 +156,18 @@
       user-select:none;
       touch-action:pan-y;
     }
-
     .lb-close{
       position:absolute;
       top:14px; right:14px;
       border:0;
       background:#fff;
       border-radius:50%;
-      width:36px;height:36px;
+      width:36px; height:36px;
       font-size:20px;
       cursor:pointer;
       line-height:36px;
       text-align:center;
     }
-
     .lb-caption{
       position:absolute;
       left:0; right:0;
@@ -241,7 +199,7 @@
 
       <div class="right">
         <div class="birthline" id="birthline">
-          Birthdate: <strong>17:34 29-01-2025 💕</strong>
+          Birthdate: <strong>17:34 29-01-25 💕</strong>
         </div>
 
         <div id="result"></div>
