@@ -12,8 +12,8 @@
       --bg1:#a3e4d7; --bg2:#d1f2eb; --card:#f7f9f9;
       --ink:#2c3e50; --accent:#148f77; --soft:#e8f8f5;
     }
+    *{ box-sizing:border-box; }
 
-    *{box-sizing:border-box}
     body{
       margin:0;
       min-height:100vh;
@@ -21,30 +21,24 @@
       background:linear-gradient(135deg,var(--bg1),var(--bg2));
       overflow-x:hidden;
 
-      /* App-like layout (no vertical centering) */
+      /* app-like (no vertical centering) + safe-area */
       padding: max(14px, env(safe-area-inset-top)) 12px
                max(16px, env(safe-area-inset-bottom));
+    }
+
+    .balloons{ position:fixed; inset:0; pointer-events:none; overflow:hidden; }
+    .balloon{
+      position:absolute; bottom:-120px;
+      font-size:26px; opacity:.85;
+      filter: drop-shadow(0 6px 6px rgba(0,0,0,.12));
+    }
+    @keyframes rise{
+      to{ transform:translateY(-110vh) rotate(6deg); opacity:.95; }
     }
 
     .app{
       width:min(520px, 100%);
       margin:0 auto;
-    }
-
-    .app-header{
-      text-align:center;
-      padding:10px 6px 14px;
-    }
-    .app-header h1{
-      margin:6px 0 6px;
-      color:var(--accent);
-      font-size:clamp(1.7rem, 3.2vw + 1rem, 2.25rem);
-      text-shadow:0 1px 0 rgba(0,0,0,0.06);
-    }
-    .app-header .meta{
-      margin:0;
-      color:var(--ink);
-      font-size:1.05rem;
     }
 
     .card{
@@ -54,10 +48,28 @@
       box-shadow:0 12px 28px rgba(0,0,0,.14);
       padding:14px 14px 18px;
       animation: cardIn .5s ease-out both;
+      overflow:hidden;
     }
     @keyframes cardIn{
-      from{transform:translateY(10px);opacity:.75}
-      to{transform:translateY(0);opacity:1}
+      from{ transform:translateY(10px); opacity:.75; }
+      to{ transform:translateY(0); opacity:1; }
+    }
+
+    /* Header INSIDE the white card */
+    .card-header{
+      text-align:center;
+      padding: 6px 6px 14px;
+    }
+    .card-header h1{
+      margin: 6px 0 6px;
+      color:var(--accent);
+      font-size:clamp(1.7rem, 3.2vw + 1rem, 2.25rem);
+      text-shadow:0 1px 0 rgba(0,0,0,0.06);
+    }
+    .card-header .meta{
+      margin:0;
+      color:var(--ink);
+      font-size:1.05rem;
     }
 
     /* ===== Slider ===== */
@@ -75,8 +87,7 @@
       cursor: zoom-in;
     }
     .slider img{
-      width:100%;
-      height:100%;
+      width:100%; height:100%;
       object-fit:cover;
       display:block;
       opacity:1;
@@ -84,7 +95,7 @@
       -webkit-user-drag:none;
     }
 
-    /* Dots overlay (story-like) */
+    /* Dots overlay */
     .dots{
       position:absolute;
       left:0; right:0;
@@ -120,35 +131,24 @@
       font-weight:800;
       color:var(--ink);
     }
-    #result{font-size:1.25rem}
-    #subresult{font-size:1.05rem;opacity:.95}
-    .big{font-size:1.9rem;letter-spacing:.5px}
+    #result{ font-size:1.25rem; }
+    #subresult{ font-size:1.05rem; opacity:.95; }
+    .big{ font-size:1.9rem; letter-spacing:.5px; }
 
-    .progress{margin-top:14px;text-align:left}
-    .progress-label{font-size:.9rem;color:#456;margin-bottom:.35rem}
-    .bar{height:12px;border-radius:999px;background:#e9f7f3;overflow:hidden}
-    .bar span{display:block;height:100%;width:0%;background:linear-gradient(90deg,#8fd3c6,#55c6b0);transition:width .8s ease}
-
-    /* Balloons */
-    .balloons{position:fixed;inset:0;pointer-events:none;overflow:hidden}
-    .balloon{
-      position:absolute;bottom:-120px;
-      font-size:26px;opacity:.85;
-      filter: drop-shadow(0 6px 6px rgba(0,0,0,.12));
-    }
-    @keyframes rise{
-      to{transform:translateY(-110vh) rotate(6deg);opacity:.95}
-    }
+    .progress{ margin-top:14px; text-align:left; }
+    .progress-label{ font-size:.9rem; color:#456; margin-bottom:.35rem; }
+    .bar{ height:12px; border-radius:999px; background:#e9f7f3; overflow:hidden; }
+    .bar span{ display:block; height:100%; width:0%; background:linear-gradient(90deg,#8fd3c6,#55c6b0); transition:width .8s ease; }
 
     @media(max-width:420px){
-      .card{padding:12px 12px 16px}
-      .slider{border-radius:16px}
+      .card{ padding:12px 12px 16px; }
+      .slider{ border-radius:16px; }
+      .card-header .meta{ font-size:1rem; }
     }
 
     /* ===== Lightbox ===== */
     .lightbox{
-      position:fixed;
-      inset:0;
+      position:fixed; inset:0;
       background:rgba(10,20,20,.72);
       display:none;
       align-items:center;
@@ -159,7 +159,6 @@
       backdrop-filter: blur(4px);
     }
     .lightbox.open{ display:flex; }
-
     .lightbox-inner{
       width:min(960px, 100%);
       max-height: 88vh;
@@ -179,20 +178,17 @@
       -webkit-user-drag:none;
       touch-action:pan-y;
     }
-
     .lb-close{
       position:absolute;
-      top:10px;
-      right:10px;
+      top:10px; right:10px;
       border:0;
       border-radius:999px;
       padding:.55rem .8rem;
-      font-weight:800;
+      font-weight:900;
       cursor:pointer;
-      background:rgba(255,255,255,.9);
+      background:rgba(255,255,255,.92);
       color:#0d695c;
     }
-
     .lb-nav{
       position:absolute;
       top:50%;
@@ -212,9 +208,6 @@
     }
     .lb-prev{ left:10px; }
     .lb-next{ right:10px; }
-    .lb-nav:active, .lb-close:active{ transform:translateY(-50%) scale(.98); }
-    .lb-close:active{ transform:scale(.98); }
-
     .lb-caption{
       position:absolute;
       left:0; right:0;
@@ -224,8 +217,6 @@
       font-weight:700;
       font-size:.95rem;
     }
-
-    /* Disable background scroll when lightbox open */
     body.noscroll{ overflow:hidden; }
   </style>
 </head>
@@ -234,12 +225,12 @@
   <div class="balloons" id="balloons" aria-hidden="true"></div>
 
   <div class="app">
-    <header class="app-header">
-      <h1>🌟 Hana's Journey 🌟</h1>
-      <p class="meta">Hana's birthdate: <strong>17:35, 29/01/2025</strong> 💕</p>
-    </header>
-
     <main class="card" role="main" aria-live="polite">
+      <header class="card-header">
+        <h1>🌟 Hana's Journey 🌟</h1>
+        <p class="meta">Hana's birthdate: <strong>17:35, 29/01/2025</strong> 💕</p>
+      </header>
+
       <div class="slider" id="slider" aria-label="Hana photo memories" title="Tap to view">
         <img id="slideImage" alt="Hana memory" loading="lazy" decoding="async">
         <div class="dots" id="dots" aria-label="Slide dots"></div>
@@ -340,7 +331,7 @@ function popBalloons(count = 10){
   }
 }
 
-/* ===== Slider + Dots + Swipe ===== */
+/* ===== Slider + dots + swipe ===== */
 const slider = document.getElementById('slider');
 const slideImg = document.getElementById('slideImage');
 const dotsWrap = document.getElementById('dots');
@@ -369,7 +360,7 @@ function renderDots(){
     btn.setAttribute('aria-label', `Go to slide ${i+1}`);
     btn.setAttribute('aria-current', String(i === idx));
     btn.addEventListener('click', (e) => {
-      e.stopPropagation(); // don't open lightbox when tapping dots
+      e.stopPropagation();        // don't open lightbox
       goTo(i, true);
     });
     dotsWrap.appendChild(btn);
@@ -433,11 +424,8 @@ async function loadSlides(){
 
 /* Swipe / drag on slider */
 let startX = 0, deltaX = 0, dragging = false;
-
 function onStart(clientX){
-  dragging = true;
-  startX = clientX;
-  deltaX = 0;
+  dragging = true; startX = clientX; deltaX = 0;
   setPaused(true);
 }
 function onMove(clientX){
@@ -464,74 +452,69 @@ slider.addEventListener('mousedown', (e) => { onStart(e.clientX); e.preventDefau
 window.addEventListener('mousemove', (e) => onMove(e.clientX));
 window.addEventListener('mouseup',   () => onEnd());
 
-/* Pause auto on hover (desktop) */
 slider.addEventListener('mouseenter', () => setPaused(true));
 slider.addEventListener('mouseleave', () => setPaused(false));
 
-/* ===== Lightbox (tap image to view) ===== */
+/* ===== Lightbox ===== */
 const lightbox = document.getElementById('lightbox');
 const lbImg = document.getElementById('lbImg');
 const lbClose = document.getElementById('lbClose');
 const lbPrev = document.getElementById('lbPrev');
 const lbNext = document.getElementById('lbNext');
 const lbCaption = document.getElementById('lbCaption');
-const lightboxInner = document.getElementById('lightboxInner');
-
-function openLightbox(){
-  if(!slides.length) return;
-  setPaused(true);
-  document.body.classList.add('noscroll');
-  lightbox.classList.add('open');
-  lightbox.setAttribute('aria-hidden', 'false');
-  showLightboxImage();
-}
-
-function closeLightbox(){
-  lightbox.classList.remove('open');
-  lightbox.setAttribute('aria-hidden', 'true');
-  document.body.classList.remove('noscroll');
-  setPaused(false);
-}
 
 function showLightboxImage(){
   lbImg.src = slides[idx];
   lbCaption.textContent = slides.length > 1 ? `Photo ${idx+1} / ${slides.length}` : '';
 }
 
+function openLightbox(){
+  if(!slides.length) return;
+  setPaused(true);
+  document.body.classList.add('noscroll');
+  lightbox.classList.add('open');
+  lightbox.setAttribute('aria-hidden','false');
+  showLightboxImage();
+}
+
+function closeLightbox(){
+  lightbox.classList.remove('open');
+  lightbox.setAttribute('aria-hidden','true');
+  document.body.classList.remove('noscroll');
+  setPaused(false);
+}
+
 function lbGo(delta){
   if(slides.length <= 1) return;
   idx = (idx + delta + slides.length) % slides.length;
-  showSlide(idx);         // keep slider in sync behind
-  showLightboxImage();    // update lightbox
+  showSlide(idx);      // keep slider synced
+  showLightboxImage(); // update lightbox
 }
 
-/* Open on tap/click the slider (but NOT when dragging) */
-let clickGuardMoved = false;
-slider.addEventListener('touchmove', () => { clickGuardMoved = true; }, { passive:true });
-slider.addEventListener('touchend', () => { setTimeout(()=> clickGuardMoved = false, 0); }, { passive:true });
+/* open lightbox by tapping the slider (avoid opening right after a swipe) */
+let movedDuringTouch = false;
+slider.addEventListener('touchmove', () => { movedDuringTouch = true; }, { passive:true });
+slider.addEventListener('touchend',  () => { setTimeout(()=> movedDuringTouch = false, 0); }, { passive:true });
 
-slider.addEventListener('click', (e) => {
-  // if user clicked on a dot, it already stopped propagation
-  // prevent opening right after a swipe gesture
-  if (Math.abs(deltaX) > 8 || clickGuardMoved) return;
+slider.addEventListener('click', () => {
+  if(Math.abs(deltaX) > 8 || movedDuringTouch) return;
   openLightbox();
 });
 
-/* Close controls */
 lbClose.addEventListener('click', closeLightbox);
-lightbox.addEventListener('click', (e) => {
-  if(e.target === lightbox) closeLightbox(); // click on backdrop
-});
+lightbox.addEventListener('click', (e) => { if(e.target === lightbox) closeLightbox(); });
+
 document.addEventListener('keydown', (e) => {
   if(!lightbox.classList.contains('open')) return;
   if(e.key === 'Escape') closeLightbox();
   if(e.key === 'ArrowLeft') lbGo(-1);
   if(e.key === 'ArrowRight') lbGo(1);
 });
+
 lbPrev.addEventListener('click', () => lbGo(-1));
 lbNext.addEventListener('click', () => lbGo(1));
 
-/* Swipe in lightbox */
+/* swipe in lightbox */
 let lbStartX = 0, lbDeltaX = 0, lbDragging = false;
 function lbOnStart(x){ lbDragging = true; lbStartX = x; lbDeltaX = 0; }
 function lbOnMove(x){ if(!lbDragging) return; lbDeltaX = x - lbStartX; }
@@ -547,21 +530,11 @@ lbImg.addEventListener('touchstart', (e) => lbOnStart(e.touches[0].clientX), { p
 lbImg.addEventListener('touchmove',  (e) => lbOnMove(e.touches[0].clientX),  { passive:true });
 lbImg.addEventListener('touchend',   () => lbOnEnd(), { passive:true });
 
-/* Prevent dragging image opening in some browsers */
+/* prevent drag ghost */
 lbImg.addEventListener('dragstart', (e) => e.preventDefault());
 slideImg.addEventListener('dragstart', (e) => e.preventDefault());
 
-/* Keep lightbox image synced if user changes slide with dots while open */
-function syncLightboxIfOpen(){
-  if(lightbox.classList.contains('open')) showLightboxImage();
-}
-const _origGoTo = goTo;
-goTo = function(i, userAction=false){
-  _origGoTo(i, userAction);
-  syncLightboxIfOpen();
-};
-
-/* Kick off */
+/* ===== Kick off ===== */
 updateAge();
 setInterval(updateAge, 30000);
 popBalloons(12);
