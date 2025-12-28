@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hana's Journey</title>
+  <title>🌟 Hana's Journey 🌟</title>
 
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet" />
 
@@ -15,6 +15,7 @@
     *{ box-sizing:border-box; }
 
     body{
+      font-family: 'Quicksand', 'Comic Neue', cursive;
       margin:0;
       min-height:100vh;
       font-family:'Quicksand', system-ui, -apple-system, BlinkMacSystemFont;
@@ -210,7 +211,7 @@
 
     <header class="card-header">
       <h1>Hana's Journey</h1>
-      <p class="meta">Birthdate: <strong>17:35, 29/01/2025</strong></p>
+      <p class="meta">Birthdate: <strong>17:34, 29/01/2025 💕</strong></p>
     </header>
 
     <div class="layout">
@@ -277,8 +278,8 @@ function updateAge(){
   const days=daysBetween(birth,now);
   const md=monthsAndDays(birth,now);
 
-  resultDiv.innerHTML=`Hana is <span class="big">${days}</span> days old`;
-  subDiv.textContent=`${md.months} months and ${md.days} days`;
+  resultDiv.innerHTML=`Hana is <span class="big">${days}</span> days old 🎈`;
+  subDiv.textContent=`${md.months} months and ${md.days} days 🧸`;
 
   const next=nextMonth(birth,now);
   const prev=new Date(next); prev.setMonth(prev.getMonth()-1);
