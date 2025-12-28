@@ -10,38 +10,58 @@
   <style>
     :root{
       --bg1:#a3e4d7; --bg2:#d1f2eb; --card:#f7f9f9;
-      --ink:#2c3e50; --accent:#148f77;
-      --soft:#e8f8f5; --pill:#d6efe9;
+      --ink:#2c3e50; --accent:#148f77; --soft:#e8f8f5;
     }
+
     *{box-sizing:border-box}
     body{
-      margin:0; min-height:100vh;
-      display:grid; place-items:center;
+      margin:0;
+      min-height:100vh;
       font-family:'Quicksand','Comic Neue',cursive;
       background:linear-gradient(135deg,var(--bg1),var(--bg2));
       overflow-x:hidden;
+
+      /* App-like layout (no vertical centering) */
+      padding: max(14px, env(safe-area-inset-top)) 12px
+               max(16px, env(safe-area-inset-bottom));
     }
-    .container{
-      width:min(480px,92vw);
-      background:var(--card);
-      padding:2.2rem 1.6rem;
-      border-radius:22px;
+
+    .app{
+      width:min(520px, 100%);
+      margin:0 auto;
+    }
+
+    .app-header{
       text-align:center;
-      box-shadow:0 10px 24px rgba(0,0,0,.15);
-      border:2px solid #ecf9f6;
-      overflow:hidden;
+      padding:10px 6px 14px;
     }
-    h1{
-      margin:0 0 .4rem;
+    .app-header h1{
+      margin:6px 0 6px;
       color:var(--accent);
-      font-size:clamp(1.6rem,3.4vw + 1rem,2.2rem);
+      font-size:clamp(1.7rem, 3.2vw + 1rem, 2.25rem);
       text-shadow:0 1px 0 rgba(0,0,0,0.06);
     }
-    .meta{margin:0 0 .9rem;color:var(--ink);font-size:1.05rem}
+    .app-header .meta{
+      margin:0;
+      color:var(--ink);
+      font-size:1.05rem;
+    }
+
+    .card{
+      background:var(--card);
+      border-radius:24px;
+      border:2px solid #ecf9f6;
+      box-shadow:0 12px 28px rgba(0,0,0,.14);
+      padding:14px 14px 18px;
+      animation: cardIn .5s ease-out both;
+    }
+    @keyframes cardIn{
+      from{transform:translateY(10px);opacity:.75}
+      to{transform:translateY(0);opacity:1}
+    }
 
     /* ===== Slider ===== */
     .slider{
-      margin: .2rem auto 0.2rem;
       width:100%;
       aspect-ratio:4/3;
       border-radius:18px;
@@ -50,10 +70,13 @@
       box-shadow:0 6px 16px rgba(0,0,0,.12);
       position:relative;
       user-select:none;
-      touch-action:pan-y; /* allow vertical scroll, but handle horizontal swipe */
+      touch-action:pan-y;
+      margin-bottom:12px;
+      cursor: zoom-in;
     }
     .slider img{
-      width:100%; height:100%;
+      width:100%;
+      height:100%;
       object-fit:cover;
       display:block;
       opacity:1;
@@ -61,62 +84,50 @@
       -webkit-user-drag:none;
     }
 
+    /* Dots overlay (story-like) */
     .dots{
+      position:absolute;
+      left:0; right:0;
+      bottom:10px;
       display:flex;
       justify-content:center;
       gap:.45rem;
-      margin:.6rem 0 0.2rem;
+      padding:0 12px;
+      pointer-events:auto;
     }
     .dot{
-      width:10px;height:10px;
+      width:10px; height:10px;
       border-radius:999px;
       border:0;
-      background:#cfeee7;
+      background: rgba(255,255,255,.55);
+      opacity:.85;
       cursor:pointer;
       padding:0;
-      transition:transform .12s ease, opacity .12s ease;
-      opacity:.8;
+      backdrop-filter: blur(4px);
+      transition: transform .12s ease, opacity .12s ease;
     }
     .dot[aria-current="true"]{
-      background:#55c6b0;
+      background: rgba(255,255,255,.95);
       opacity:1;
-      transform:scale(1.15);
-    }
-
-    .helper{
-      margin:.25rem 0 0.6rem;
-      font-size:.9rem;
-      color:#456;
-      opacity:.85;
+      transform: scale(1.15);
     }
 
     #result,#subresult{
-      margin-top:1rem;
-      padding:1rem;
+      margin-top:10px;
+      padding:12px 12px;
       background:var(--soft);
-      border-radius:12px;
-      font-weight:700;
+      border-radius:14px;
+      font-weight:800;
       color:var(--ink);
-      animation:fadeIn .6s ease-out both;
     }
-    #result{font-size:1.35rem}
-    #subresult{font-size:1.1rem;opacity:.95}
-    .big{font-size:2rem;letter-spacing:.5px}
+    #result{font-size:1.25rem}
+    #subresult{font-size:1.05rem;opacity:.95}
+    .big{font-size:1.9rem;letter-spacing:.5px}
 
-    .progress{margin-top:1rem;text-align:left}
+    .progress{margin-top:14px;text-align:left}
     .progress-label{font-size:.9rem;color:#456;margin-bottom:.35rem}
-    .bar{
-      height:12px;
-      background:#e9f7f3;
-      border-radius:999px;
-      overflow:hidden;
-    }
-    .bar span{
-      height:100%;display:block;
-      background:linear-gradient(90deg,#8fd3c6,#55c6b0);
-      width:0%;
-      transition:width .8s ease;
-    }
+    .bar{height:12px;border-radius:999px;background:#e9f7f3;overflow:hidden}
+    .bar span{display:block;height:100%;width:0%;background:linear-gradient(90deg,#8fd3c6,#55c6b0);transition:width .8s ease}
 
     /* Balloons */
     .balloons{position:fixed;inset:0;pointer-events:none;overflow:hidden}
@@ -128,39 +139,132 @@
     @keyframes rise{
       to{transform:translateY(-110vh) rotate(6deg);opacity:.95}
     }
-    @keyframes fadeIn{
-      from{opacity:0;transform:translateY(10px)}
-      to{opacity:1;transform:translateY(0)}
-    }
-    @media(max-width:600px){
-      #result{font-size:1.2rem}
-      #subresult{font-size:1rem}
+
+    @media(max-width:420px){
+      .card{padding:12px 12px 16px}
       .slider{border-radius:16px}
     }
+
+    /* ===== Lightbox ===== */
+    .lightbox{
+      position:fixed;
+      inset:0;
+      background:rgba(10,20,20,.72);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:9999;
+      padding: max(12px, env(safe-area-inset-top)) 12px
+               max(12px, env(safe-area-inset-bottom));
+      backdrop-filter: blur(4px);
+    }
+    .lightbox.open{ display:flex; }
+
+    .lightbox-inner{
+      width:min(960px, 100%);
+      max-height: 88vh;
+      position:relative;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .lightbox-img{
+      max-width:100%;
+      max-height:88vh;
+      border-radius:18px;
+      box-shadow:0 12px 28px rgba(0,0,0,.35);
+      background:#111;
+      object-fit:contain;
+      user-select:none;
+      -webkit-user-drag:none;
+      touch-action:pan-y;
+    }
+
+    .lb-close{
+      position:absolute;
+      top:10px;
+      right:10px;
+      border:0;
+      border-radius:999px;
+      padding:.55rem .8rem;
+      font-weight:800;
+      cursor:pointer;
+      background:rgba(255,255,255,.9);
+      color:#0d695c;
+    }
+
+    .lb-nav{
+      position:absolute;
+      top:50%;
+      transform:translateY(-50%);
+      border:0;
+      width:42px; height:42px;
+      border-radius:999px;
+      cursor:pointer;
+      background:rgba(255,255,255,.85);
+      color:#0d695c;
+      font-size:20px;
+      font-weight:900;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      user-select:none;
+    }
+    .lb-prev{ left:10px; }
+    .lb-next{ right:10px; }
+    .lb-nav:active, .lb-close:active{ transform:translateY(-50%) scale(.98); }
+    .lb-close:active{ transform:scale(.98); }
+
+    .lb-caption{
+      position:absolute;
+      left:0; right:0;
+      bottom:-42px;
+      text-align:center;
+      color:rgba(255,255,255,.9);
+      font-weight:700;
+      font-size:.95rem;
+    }
+
+    /* Disable background scroll when lightbox open */
+    body.noscroll{ overflow:hidden; }
   </style>
 </head>
+
 <body>
+  <div class="balloons" id="balloons" aria-hidden="true"></div>
 
-<div class="balloons" id="balloons" aria-hidden="true"></div>
+  <div class="app">
+    <header class="app-header">
+      <h1>🌟 Hana's Journey 🌟</h1>
+      <p class="meta">Hana's birthdate: <strong>17:35, 29/01/2025</strong> 💕</p>
+    </header>
 
-<main class="container" role="main" aria-live="polite">
-  <h1>Hana's Journey</h1>
-  <p class="meta">Hana's birthdate: <strong>17:34, 29/01/2025</strong> 💕</p>
+    <main class="card" role="main" aria-live="polite">
+      <div class="slider" id="slider" aria-label="Hana photo memories" title="Tap to view">
+        <img id="slideImage" alt="Hana memory" loading="lazy" decoding="async">
+        <div class="dots" id="dots" aria-label="Slide dots"></div>
+      </div>
 
-  <div class="slider" id="slider" aria-label="Hana photo memories">
-    <img id="slideImage" alt="Hana memory" loading="lazy" decoding="async">
+      <div id="result">Calculating…</div>
+      <div id="subresult"></div>
+
+      <div class="progress">
+        <div class="progress-label" id="progressLabel">Progress to next month: 0%</div>
+        <div class="bar"><span id="barFill"></span></div>
+      </div>
+    </main>
   </div>
 
-  <div class="dots" id="dots" aria-label="Slide dots"></div>
-
-  <div id="result">Calculating…</div>
-  <div id="subresult"></div>
-
-  <div class="progress">
-    <div class="progress-label" id="progressLabel">Progress to next month: 0%</div>
-    <div class="bar"><span id="barFill"></span></div>
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox" aria-hidden="true">
+    <div class="lightbox-inner" id="lightboxInner">
+      <button class="lb-close" id="lbClose" type="button" aria-label="Close">✕</button>
+      <button class="lb-nav lb-prev" id="lbPrev" type="button" aria-label="Previous">‹</button>
+      <img class="lightbox-img" id="lbImg" alt="Hana photo enlarged">
+      <button class="lb-nav lb-next" id="lbNext" type="button" aria-label="Next">›</button>
+      <div class="lb-caption" id="lbCaption"></div>
+    </div>
   </div>
-</main>
 
 <script>
 /* ===== Age logic ===== */
@@ -173,7 +277,6 @@ const progressLabel = document.getElementById('progressLabel');
 function daysBetween(a,b){ return Math.floor((b-a)/86400000); }
 
 function monthsAndDays(from,to){
-  // calendar-ish months/days (keeps your original spirit, simple + stable)
   let months = (to.getFullYear()-from.getFullYear())*12 + (to.getMonth()-from.getMonth());
   let days = to.getDate() - from.getDate();
   if(days < 0){
@@ -209,10 +312,9 @@ function updateAge(){
     return;
   }
 
-  resultDiv.innerHTML = `Hana is <strong>${totalDays}</strong> days old! 🎈`;
+  resultDiv.innerHTML = `Hana is <span class="big">${totalDays}</span> days old! 🎈`;
   subDiv.innerHTML = `That's <strong>${months}</strong> months and <strong>${days}</strong> days. 🧸`;
 
-  // progress to next month milestone
   const next = nextMonthAnniversary(birth, now);
   const prev = new Date(next);
   prev.setMonth(prev.getMonth() - 1);
@@ -238,7 +340,7 @@ function popBalloons(count = 10){
   }
 }
 
-/* ===== Slider (dots + swipe) ===== */
+/* ===== Slider + Dots + Swipe ===== */
 const slider = document.getElementById('slider');
 const slideImg = document.getElementById('slideImage');
 const dotsWrap = document.getElementById('dots');
@@ -266,7 +368,10 @@ function renderDots(){
     btn.type = 'button';
     btn.setAttribute('aria-label', `Go to slide ${i+1}`);
     btn.setAttribute('aria-current', String(i === idx));
-    btn.addEventListener('click', () => goTo(i, true));
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation(); // don't open lightbox when tapping dots
+      goTo(i, true);
+    });
     dotsWrap.appendChild(btn);
   });
 }
@@ -281,7 +386,6 @@ function showSlide(i){
   slideImg.style.opacity = '0';
   setTimeout(() => {
     slideImg.src = slides[i];
-    // fade in once image is ready
     slideImg.onload = () => { slideImg.style.opacity = '1'; };
   }, 160);
   updateDots();
@@ -292,7 +396,6 @@ function goTo(i, userAction=false){
   idx = (i + slides.length) % slides.length;
   showSlide(idx);
   if(userAction){
-    // restart auto timer so it doesn't instantly jump again
     startAuto();
     popBalloons(4);
   }
@@ -328,10 +431,8 @@ async function loadSlides(){
   }
 }
 
-/* Swipe / drag handling */
-let startX = 0;
-let deltaX = 0;
-let dragging = false;
+/* Swipe / drag on slider */
+let startX = 0, deltaX = 0, dragging = false;
 
 function onStart(clientX){
   dragging = true;
@@ -347,11 +448,12 @@ function onEnd(){
   if(!dragging) return;
   dragging = false;
 
-  const threshold = Math.max(40, Math.floor(slider.clientWidth * 0.12)); // responsive
+  const threshold = Math.max(40, Math.floor(slider.clientWidth * 0.12));
   if(deltaX <= -threshold) next();
   else if(deltaX >= threshold) prev();
 
   setPaused(false);
+  deltaX = 0;
 }
 
 slider.addEventListener('touchstart', (e) => onStart(e.touches[0].clientX), { passive:true });
@@ -362,15 +464,108 @@ slider.addEventListener('mousedown', (e) => { onStart(e.clientX); e.preventDefau
 window.addEventListener('mousemove', (e) => onMove(e.clientX));
 window.addEventListener('mouseup',   () => onEnd());
 
+/* Pause auto on hover (desktop) */
 slider.addEventListener('mouseenter', () => setPaused(true));
 slider.addEventListener('mouseleave', () => setPaused(false));
 
+/* ===== Lightbox (tap image to view) ===== */
+const lightbox = document.getElementById('lightbox');
+const lbImg = document.getElementById('lbImg');
+const lbClose = document.getElementById('lbClose');
+const lbPrev = document.getElementById('lbPrev');
+const lbNext = document.getElementById('lbNext');
+const lbCaption = document.getElementById('lbCaption');
+const lightboxInner = document.getElementById('lightboxInner');
+
+function openLightbox(){
+  if(!slides.length) return;
+  setPaused(true);
+  document.body.classList.add('noscroll');
+  lightbox.classList.add('open');
+  lightbox.setAttribute('aria-hidden', 'false');
+  showLightboxImage();
+}
+
+function closeLightbox(){
+  lightbox.classList.remove('open');
+  lightbox.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('noscroll');
+  setPaused(false);
+}
+
+function showLightboxImage(){
+  lbImg.src = slides[idx];
+  lbCaption.textContent = slides.length > 1 ? `Photo ${idx+1} / ${slides.length}` : '';
+}
+
+function lbGo(delta){
+  if(slides.length <= 1) return;
+  idx = (idx + delta + slides.length) % slides.length;
+  showSlide(idx);         // keep slider in sync behind
+  showLightboxImage();    // update lightbox
+}
+
+/* Open on tap/click the slider (but NOT when dragging) */
+let clickGuardMoved = false;
+slider.addEventListener('touchmove', () => { clickGuardMoved = true; }, { passive:true });
+slider.addEventListener('touchend', () => { setTimeout(()=> clickGuardMoved = false, 0); }, { passive:true });
+
+slider.addEventListener('click', (e) => {
+  // if user clicked on a dot, it already stopped propagation
+  // prevent opening right after a swipe gesture
+  if (Math.abs(deltaX) > 8 || clickGuardMoved) return;
+  openLightbox();
+});
+
+/* Close controls */
+lbClose.addEventListener('click', closeLightbox);
+lightbox.addEventListener('click', (e) => {
+  if(e.target === lightbox) closeLightbox(); // click on backdrop
+});
+document.addEventListener('keydown', (e) => {
+  if(!lightbox.classList.contains('open')) return;
+  if(e.key === 'Escape') closeLightbox();
+  if(e.key === 'ArrowLeft') lbGo(-1);
+  if(e.key === 'ArrowRight') lbGo(1);
+});
+lbPrev.addEventListener('click', () => lbGo(-1));
+lbNext.addEventListener('click', () => lbGo(1));
+
+/* Swipe in lightbox */
+let lbStartX = 0, lbDeltaX = 0, lbDragging = false;
+function lbOnStart(x){ lbDragging = true; lbStartX = x; lbDeltaX = 0; }
+function lbOnMove(x){ if(!lbDragging) return; lbDeltaX = x - lbStartX; }
+function lbOnEnd(){
+  if(!lbDragging) return;
+  lbDragging = false;
+  const threshold = Math.max(50, Math.floor(window.innerWidth * 0.12));
+  if(lbDeltaX <= -threshold) lbGo(1);
+  else if(lbDeltaX >= threshold) lbGo(-1);
+  lbDeltaX = 0;
+}
+lbImg.addEventListener('touchstart', (e) => lbOnStart(e.touches[0].clientX), { passive:true });
+lbImg.addEventListener('touchmove',  (e) => lbOnMove(e.touches[0].clientX),  { passive:true });
+lbImg.addEventListener('touchend',   () => lbOnEnd(), { passive:true });
+
+/* Prevent dragging image opening in some browsers */
+lbImg.addEventListener('dragstart', (e) => e.preventDefault());
+slideImg.addEventListener('dragstart', (e) => e.preventDefault());
+
+/* Keep lightbox image synced if user changes slide with dots while open */
+function syncLightboxIfOpen(){
+  if(lightbox.classList.contains('open')) showLightboxImage();
+}
+const _origGoTo = goTo;
+goTo = function(i, userAction=false){
+  _origGoTo(i, userAction);
+  syncLightboxIfOpen();
+};
+
 /* Kick off */
 updateAge();
-setInterval(updateAge, 30000); // keep age/progress fresh
+setInterval(updateAge, 30000);
 popBalloons(12);
 loadSlides();
 </script>
-
 </body>
 </html>
