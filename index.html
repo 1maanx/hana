@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>🌟 Hana's Journey 🌟</title>
+  <title>Hana's Journey</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet" />
 
   <style>
     :root{
@@ -17,86 +17,72 @@
     body{
       margin:0;
       min-height:100vh;
-      font-family:'Quicksand','Comic Neue',cursive;
+      font-family:'Quicksand', system-ui, -apple-system, BlinkMacSystemFont;
       background:linear-gradient(135deg,var(--bg1),var(--bg2));
       overflow-x:hidden;
 
-      /* app-like (no vertical centering) + safe-area */
+      /* app-like + safe-area */
       padding: max(14px, env(safe-area-inset-top)) 12px
                max(16px, env(safe-area-inset-bottom));
-    }
-
-    .balloons{ position:fixed; inset:0; pointer-events:none; overflow:hidden; }
-    .balloon{
-      position:absolute; bottom:-120px;
-      font-size:26px; opacity:.85;
-      filter: drop-shadow(0 6px 6px rgba(0,0,0,.12));
-    }
-    @keyframes rise{
-      to{ transform:translateY(-110vh) rotate(6deg); opacity:.95; }
+      color: var(--ink);
     }
 
     .app{
-      width: 100%;
-      max-width: clamp(520px, 80vw, 900px);
-      margin: 0 auto;
+      width:100%;
+      max-width: clamp(520px, 80vw, 1200px);
+      margin:0 auto;
     }
 
     .card{
       background:var(--card);
-      border-radius:24px;
-      border:2px solid #ecf9f6;
-      box-shadow:0 12px 28px rgba(0,0,0,.14);
+      border-radius:22px;
+      box-shadow:0 10px 26px rgba(0,0,0,.12);
       padding:14px 14px 18px;
-      animation: cardIn .5s ease-out both;
-      overflow:hidden;
-    }
-    @keyframes cardIn{
-      from{ transform:translateY(10px); opacity:.75; }
-      to{ transform:translateY(0); opacity:1; }
     }
 
-    /* Header INSIDE the white card */
+    /* Header inside card */
     .card-header{
       text-align:center;
-      padding: 6px 6px 14px;
+      padding:8px 6px 14px;
     }
     .card-header h1{
-      margin: 6px 0 6px;
+      margin:4px 0 6px;
+      font-size:clamp(1.6rem, 3vw + 1rem, 2.2rem);
       color:var(--accent);
-      font-size:clamp(1.7rem, 3.2vw + 1rem, 2.25rem);
-      text-shadow:0 1px 0 rgba(0,0,0,0.06);
+      font-weight:700;
     }
     .card-header .meta{
       margin:0;
-      color:var(--ink);
       font-size:1.05rem;
+      opacity:.85;
     }
 
-    /* ===== Slider ===== */
+    /* ===== 1-col mobile default ===== */
+    .layout{ display:block; }
+
+    /* Slider */
     .slider{
       width:100%;
-      aspect-ratio:4/3;
-      border-radius:18px;
+      aspect-ratio:4/3;         /* mobile/tablet */
+      border-radius:16px;
       overflow:hidden;
-      background:#eefaf7;
-      box-shadow:0 6px 16px rgba(0,0,0,.12);
+      background:#eee;
       position:relative;
+      margin-bottom:12px;
       user-select:none;
       touch-action:pan-y;
-      margin-bottom:12px;
       cursor: zoom-in;
     }
     .slider img{
-      width:100%; height:100%;
+      width:100%;
+      height:100%;
       object-fit:cover;
       display:block;
-      opacity:1;
-      transition:opacity .35s ease;
+      transition:opacity .25s ease;
       -webkit-user-drag:none;
     }
 
-    /* Dots overlay */
+    /* Dots */
     .dots{
       position:absolute;
       left:0; right:0;
@@ -104,474 +90,287 @@
       display:flex;
       justify-content:center;
       gap:.45rem;
-      padding:0 12px;
+      padding:0 10px;
       pointer-events:auto;
     }
     .dot{
-      width:10px; height:10px;
-      border-radius:999px;
+      width:9px;height:9px;
+      border-radius:50%;
       border:0;
-      background: rgba(255,255,255,.55);
-      opacity:.85;
+      background:rgba(255,255,255,.55);
       cursor:pointer;
       padding:0;
-      backdrop-filter: blur(4px);
-      transition: transform .12s ease, opacity .12s ease;
     }
     .dot[aria-current="true"]{
-      background: rgba(255,255,255,.95);
-      opacity:1;
-      transform: scale(1.15);
+      background:rgba(255,255,255,.95);
     }
 
     #result,#subresult{
       margin-top:10px;
-      padding:12px 12px;
+      padding:12px;
       background:var(--soft);
-      border-radius:14px;
-      font-weight:800;
-      color:var(--ink);
+      border-radius:12px;
+      font-weight:600;
     }
-    #result{ font-size:1.25rem; }
-    #subresult{ font-size:1.05rem; opacity:.95; }
-    .big{ font-size:1.9rem; letter-spacing:.5px; }
+    #result{ font-size:1.2rem; }
+    #subresult{ font-size:1rem; opacity:.9; }
+    .big{ font-size:1.8rem; font-weight:700; }
 
-    .progress{ margin-top:14px; text-align:left; }
-    .progress-label{ font-size:.9rem; color:#456; margin-bottom:.35rem; }
-    .bar{ height:12px; border-radius:999px; background:#e9f7f3; overflow:hidden; }
-    .bar span{ display:block; height:100%; width:0%; background:linear-gradient(90deg,#8fd3c6,#55c6b0); transition:width .8s ease; }
-
-    @media(max-width:420px){
-      .card{ padding:12px 12px 16px; }
-      .slider{ border-radius:16px; }
-      .card-header .meta{ font-size:1rem; }
+    .progress{ margin-top:14px; }
+    .progress-label{ font-size:.9rem; opacity:.75; margin-bottom:4px; }
+    .bar{
+      height:10px;
+      background:#e6e8eb;
+      border-radius:999px;
+      overflow:hidden;
+    }
+    .bar span{
+      height:100%;
+      display:block;
+      background:linear-gradient(90deg,#8fd3c6,#55c6b0);
+      width:0%;
+      transition:width .4s ease;
     }
 
-    /* ===== Lightbox ===== */
+    /* ===== Desktop: 2 columns + 16:9 slider ===== */
+    @media (min-width: 1024px){
+      .layout{
+        display:grid;
+        grid-template-columns: 1.15fr 0.85fr;
+        gap:16px;
+        align-items:start;
+      }
+      .slider{
+        aspect-ratio:16/9;      /* PC album look */
+        margin-bottom:0;
+      }
+      .right #result,
+      .right #subresult{
+        margin-top:0;
+      }
+    }
+
+    /* Lightbox */
     .lightbox{
-      position:fixed; inset:0;
-      background:rgba(10,20,20,.72);
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.7);
       display:none;
       align-items:center;
       justify-content:center;
       z-index:9999;
-      padding: max(12px, env(safe-area-inset-top)) 12px
-               max(12px, env(safe-area-inset-bottom));
-      backdrop-filter: blur(4px);
+      padding:16px;
     }
     .lightbox.open{ display:flex; }
-    .lightbox-inner{
-      width:min(960px, 100%);
-      max-height: 88vh;
-      position:relative;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-    }
-    .lightbox-img{
+    .lightbox img{
       max-width:100%;
-      max-height:88vh;
-      border-radius:18px;
-      box-shadow:0 12px 28px rgba(0,0,0,.35);
-      background:#111;
+      max-height:90vh;
+      border-radius:14px;
+      background:#000;
       object-fit:contain;
-      user-select:none;
-      -webkit-user-drag:none;
-      touch-action:pan-y;
     }
     .lb-close{
       position:absolute;
-      top:10px; right:10px;
+      top:14px; right:14px;
       border:0;
-      border-radius:999px;
-      padding:.55rem .8rem;
-      font-weight:900;
-      cursor:pointer;
-      background:rgba(255,255,255,.92);
-      color:#0d695c;
-    }
-    .lb-nav{
-      position:absolute;
-      top:50%;
-      transform:translateY(-50%);
-      border:0;
-      width:42px; height:42px;
-      border-radius:999px;
-      cursor:pointer;
-      background:rgba(255,255,255,.85);
-      color:#0d695c;
+      background:#fff;
+      border-radius:50%;
+      width:36px;height:36px;
       font-size:20px;
-      font-weight:900;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      user-select:none;
-    }
-    .lb-prev{ left:10px; }
-    .lb-next{ right:10px; }
-    .lb-caption{
-      position:absolute;
-      left:0; right:0;
-      bottom:-42px;
-      text-align:center;
-      color:rgba(255,255,255,.9);
-      font-weight:700;
-      font-size:.95rem;
+      cursor:pointer;
     }
     body.noscroll{ overflow:hidden; }
   </style>
 </head>
 
 <body>
-  <div class="balloons" id="balloons" aria-hidden="true"></div>
+<div class="app">
+  <main class="card">
 
-  <div class="app">
-    <main class="card" role="main" aria-live="polite">
-      <header class="card-header">
-        <h1>🌟 Hana's Journey 🌟</h1>
-        <p class="meta">Hana's birthdate: <strong>17:35, 29/01/2025</strong> 💕</p>
-      </header>
+    <header class="card-header">
+      <h1>Hana's Journey</h1>
+      <p class="meta">Birthdate: <strong>17:35, 29/01/2025</strong></p>
+    </header>
 
-      <div class="slider" id="slider" aria-label="Hana photo memories" title="Tap to view">
-        <img id="slideImage" alt="Hana memory" loading="lazy" decoding="async">
-        <div class="dots" id="dots" aria-label="Slide dots"></div>
+    <div class="layout">
+      <div class="left">
+        <div class="slider" id="slider">
+          <img id="slideImage" alt="Hana photo" loading="lazy" decoding="async">
+          <div class="dots" id="dots"></div>
+        </div>
       </div>
 
-      <div id="result">Calculating…</div>
-      <div id="subresult"></div>
-
-      <div class="progress">
-        <div class="progress-label" id="progressLabel">Progress to next month: 0%</div>
-        <div class="bar"><span id="barFill"></span></div>
+      <div class="right">
+        <div id="result"></div>
+        <div id="subresult"></div>
+        <div class="progress">
+          <div class="progress-label" id="progressLabel"></div>
+          <div class="bar"><span id="barFill"></span></div>
+        </div>
       </div>
-    </main>
-  </div>
-
-  <!-- Lightbox -->
-  <div class="lightbox" id="lightbox" aria-hidden="true">
-    <div class="lightbox-inner" id="lightboxInner">
-      <button class="lb-close" id="lbClose" type="button" aria-label="Close">✕</button>
-      <button class="lb-nav lb-prev" id="lbPrev" type="button" aria-label="Previous">‹</button>
-      <img class="lightbox-img" id="lbImg" alt="Hana photo enlarged">
-      <button class="lb-nav lb-next" id="lbNext" type="button" aria-label="Next">›</button>
-      <div class="lb-caption" id="lbCaption"></div>
     </div>
-  </div>
+
+  </main>
+</div>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" aria-hidden="true">
+  <button class="lb-close" id="lbClose" aria-label="Close">✕</button>
+  <img id="lbImg" alt="Hana photo large">
+</div>
 
 <script>
-/* ===== Age logic ===== */
+/* ===== Age ===== */
 const birth = new Date('2025-01-29T17:35:00+07:00');
 const resultDiv = document.getElementById('result');
 const subDiv = document.getElementById('subresult');
 const barFill = document.getElementById('barFill');
 const progressLabel = document.getElementById('progressLabel');
 
-function daysBetween(a,b){ return Math.floor((b-a)/86400000); }
+const daysBetween=(a,b)=>Math.floor((b-a)/86400000);
 
 function monthsAndDays(from,to){
-  let months = (to.getFullYear()-from.getFullYear())*12 + (to.getMonth()-from.getMonth());
-  let days = to.getDate() - from.getDate();
-  if(days < 0){
-    months -= 1;
-    const prevMonthLastDay = new Date(to.getFullYear(), to.getMonth(), 0).getDate();
-    days = prevMonthLastDay + days;
+  let m=(to.getFullYear()-from.getFullYear())*12+(to.getMonth()-from.getMonth());
+  let d=to.getDate()-from.getDate();
+  if(d<0){
+    m--;
+    d+=new Date(to.getFullYear(),to.getMonth(),0).getDate();
   }
-  return { months, days };
+  return{months:m,days:d};
 }
 
-function nextMonthAnniversary(base, now){
-  let y = now.getFullYear();
-  let m = now.getMonth();
-  const d = Math.min(base.getDate(), new Date(y, m+1, 0).getDate());
-  let cand = new Date(y, m, d, base.getHours(), base.getMinutes(), 0, 0);
-  if(cand <= now){
-    const y2 = (m === 11) ? y+1 : y;
-    const m2 = (m+1) % 12;
-    const d2 = Math.min(base.getDate(), new Date(y2, m2+1, 0).getDate());
-    cand = new Date(y2, m2, d2, base.getHours(), base.getMinutes(), 0, 0);
-  }
-  return cand;
+function nextMonth(base,now){
+  let y=now.getFullYear(),m=now.getMonth();
+  let d=Math.min(base.getDate(),new Date(y,m+1,0).getDate());
+  let t=new Date(y,m,d,base.getHours(),base.getMinutes());
+  if(t<=now) t=new Date(y,m+1,d,base.getHours(),base.getMinutes());
+  return t;
 }
 
 function updateAge(){
-  const now = new Date();
-  const totalDays = daysBetween(birth, now);
-  const { months, days } = monthsAndDays(birth, now);
+  const now=new Date();
+  const days=daysBetween(birth,now);
+  const md=monthsAndDays(birth,now);
 
-  if(totalDays < 0){
-    resultDiv.textContent = 'Oops, the birthdate seems invalid! 😜';
-    subDiv.textContent = '';
-    return;
-  }
+  resultDiv.innerHTML=`Hana is <span class="big">${days}</span> days old`;
+  subDiv.textContent=`${md.months} months and ${md.days} days`;
 
-  resultDiv.innerHTML = `Hana is <span class="big">${totalDays}</span> days old! 🎈`;
-  subDiv.innerHTML = `That's <strong>${months}</strong> months and <strong>${days}</strong> days. 🧸`;
-
-  const next = nextMonthAnniversary(birth, now);
-  const prev = new Date(next);
-  prev.setMonth(prev.getMonth() - 1);
-
-  const span = next - prev;
-  const passed = now - prev;
-  const pct = Math.max(0, Math.min(100, Math.round((passed / span) * 100)));
-  barFill.style.width = pct + '%';
-  progressLabel.textContent = `Progress to next month: ${pct}%`;
+  const next=nextMonth(birth,now);
+  const prev=new Date(next); prev.setMonth(prev.getMonth()-1);
+  const pct=Math.round(((now-prev)/(next-prev))*100);
+  barFill.style.width=pct+'%';
+  progressLabel.textContent=`Progress to next month: ${pct}%`;
 }
 
-/* ===== Balloons ===== */
-const balloonWrap = document.getElementById('balloons');
-function popBalloons(count = 10){
-  for(let i=0;i<count;i++){
-    const b = document.createElement('span');
-    b.className = 'balloon';
-    b.style.left = Math.random()*100 + 'vw';
-    b.style.animation = `rise ${5 + Math.random()*6}s ease-in forwards`;
-    b.textContent = ['🎈','🎀','💚','💛','💖','🧸'][Math.floor(Math.random()*6)];
-    balloonWrap.appendChild(b);
-    setTimeout(()=>b.remove(), 7000);
-  }
-}
+/* ===== Slider (cache + preload prev & next) ===== */
+const slider=document.getElementById('slider');
+const slideImg=document.getElementById('slideImage');
+const dotsWrap=document.getElementById('dots');
 
-/* ===== Slider + dots + swipe ===== */
-const slider = document.getElementById('slider');
-const slideImg = document.getElementById('slideImage');
-const dotsWrap = document.getElementById('dots');
+let slides=[],idx=0;
+const preloaded=new Set();
 
-let slides = [];
-let idx = 0;
-let timer = null;
-let paused = false;
-
-/* Preload cache to avoid re-requesting the same URLs */
-const preloaded = new Set();
-function preloadImage(url){
+function preload(url){
   if(!url || preloaded.has(url)) return;
   preloaded.add(url);
-  const img = new Image();
-  img.decoding = 'async';
-  img.loading = 'eager';
-  img.src = url;
+  const i=new Image();
+  i.decoding = 'async';
+  i.src=url;
 }
-
-function preloadNeighbors(centerIndex){
-  if(slides.length <= 1) return;
-  const c = (centerIndex + slides.length) % slides.length;
-  const prevIndex = (c - 1 + slides.length) % slides.length;
-  const nextIndex = (c + 1) % slides.length;
-  preloadImage(slides[prevIndex]);
-  preloadImage(slides[nextIndex]);
-}
-
-function setPaused(state){
-  paused = state;
-  if(paused){
-    if(timer) clearInterval(timer);
-    timer = null;
-  }else{
-    startAuto();
-  }
-}
-
-function renderDots(){
-  dotsWrap.innerHTML = '';
-  slides.forEach((_, i) => {
-    const btn = document.createElement('button');
-    btn.className = 'dot';
-    btn.type = 'button';
-    btn.setAttribute('aria-label', `Go to slide ${i+1}`);
-    btn.setAttribute('aria-current', String(i === idx));
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();        // don't open lightbox
-      goTo(i, true);
-    });
-    dotsWrap.appendChild(btn);
-  });
-}
-
-function updateDots(){
-  const dots = dotsWrap.querySelectorAll('.dot');
-  dots.forEach((d, i) => d.setAttribute('aria-current', String(i === idx)));
-}
-
-function showSlide(i){
-  if(!slides.length) return;
-
-  const iNorm = (i + slides.length) % slides.length;
-
-  slideImg.style.opacity = '0';
-  setTimeout(() => {
-    slideImg.src = slides[iNorm];
-    slideImg.onload = () => { slideImg.style.opacity = '1'; };
-  }, 160);
-
-  // Preload prev & next for smoother swipe/auto
-  preloadNeighbors(iNorm);
-
-  updateDots();
-}
-
-function goTo(i, userAction=false){
-  if(!slides.length) return;
-  idx = (i + slides.length) % slides.length;
-  showSlide(idx);
-  if(userAction){
-    startAuto();
-    popBalloons(4);
-  }
-}
-
-function next(){ if(!paused) goTo(idx+1); }
-function prev(){ if(!paused) goTo(idx-1); }
-
-function startAuto(){
-  if(timer) clearInterval(timer);
-  if(slides.length <= 1) return;
-  timer = setInterval(() => { if(!paused) next(); }, 4000);
+function preloadNeighbors(i){
+  if(slides.length<2) return;
+  preload(slides[(i-1+slides.length)%slides.length]);
+  preload(slides[(i+1)%slides.length]);
 }
 
 async function loadSlides(){
   try{
-    // ✅ changed no-store -> default (allow browser caching)
-    const res = await fetch('./slides.json', { cache: 'default' });
-    if(!res.ok) throw new Error('slides.json not found');
-    const data = await res.json();
-    if(!Array.isArray(data) || data.length === 0) throw new Error('slides.json empty');
+    const r=await fetch('./slides.json',{cache:'default'});
+    const data=await r.json();
+    slides = Array.isArray(data) && data.length ? data : ['images/slides/placeholder.jpg'];
+  }catch{
+    slides=['images/slides/placeholder.jpg'];
+  }
+  renderDots();
+  show(0);
+  auto();
+}
 
-    slides = data;
-    idx = 0;
+function renderDots(){
+  dotsWrap.innerHTML='';
+  slides.forEach((_,i)=>{
+    const b=document.createElement('button');
+    b.className='dot';
+    b.type='button';
+    b.setAttribute('aria-current', String(i===idx));
+    b.onclick=e=>{ e.stopPropagation(); show(i,true); };
+    dotsWrap.appendChild(b);
+  });
+}
 
-    // Show first slide, then preload neighbors
-    slideImg.src = slides[0];
-    renderDots();
-    preloadNeighbors(0);
-    startAuto();
-  }catch(e){
-    console.warn(e);
-    slides = ['images/slides/placeholder.jpg'];
-    idx = 0;
-    slideImg.src = slides[0];
-    renderDots();
+function updateDots(){
+  [...dotsWrap.children].forEach((d,n)=>d.setAttribute('aria-current', String(n===idx)));
+}
+
+function show(i,user=false){
+  idx=(i+slides.length)%slides.length;
+
+  slideImg.style.opacity=0;
+  setTimeout(()=>{
+    slideImg.src=slides[idx];
+    slideImg.onload=()=>slideImg.style.opacity=1;
+  },120);
+
+  updateDots();
+  preloadNeighbors(idx);
+
+  if(user) auto(); // restart interval after manual change
+}
+
+let autoTimer;
+function auto(){
+  clearInterval(autoTimer);
+  if(slides.length>1){
+    autoTimer=setInterval(()=>show(idx+1),4000);
   }
 }
 
-/* Swipe / drag on slider */
-let startX = 0, deltaX = 0, dragging = false;
-function onStart(clientX){
-  dragging = true; startX = clientX; deltaX = 0;
-  setPaused(true);
-}
-function onMove(clientX){
-  if(!dragging) return;
-  deltaX = clientX - startX;
-}
-function onEnd(){
-  if(!dragging) return;
-  dragging = false;
-
-  const threshold = Math.max(40, Math.floor(slider.clientWidth * 0.12));
-  if(deltaX <= -threshold) next();
-  else if(deltaX >= threshold) prev();
-
-  setPaused(false);
-  deltaX = 0;
-}
-
-slider.addEventListener('touchstart', (e) => onStart(e.touches[0].clientX), { passive:true });
-slider.addEventListener('touchmove',  (e) => onMove(e.touches[0].clientX),  { passive:true });
-slider.addEventListener('touchend',   () => onEnd(), { passive:true });
-
-slider.addEventListener('mousedown', (e) => { onStart(e.clientX); e.preventDefault(); });
-window.addEventListener('mousemove', (e) => onMove(e.clientX));
-window.addEventListener('mouseup',   () => onEnd());
-
-slider.addEventListener('mouseenter', () => setPaused(true));
-slider.addEventListener('mouseleave', () => setPaused(false));
+/* swipe */
+let sx=0;
+slider.addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});
+slider.addEventListener('touchend',e=>{
+  const dx=e.changedTouches[0].clientX-sx;
+  if(dx>40) show(idx-1,true);
+  if(dx<-40) show(idx+1,true);
+},{passive:true});
 
 /* ===== Lightbox ===== */
-const lightbox = document.getElementById('lightbox');
-const lbImg = document.getElementById('lbImg');
-const lbClose = document.getElementById('lbClose');
-const lbPrev = document.getElementById('lbPrev');
-const lbNext = document.getElementById('lbNext');
-const lbCaption = document.getElementById('lbCaption');
+const lightbox=document.getElementById('lightbox');
+const lbImg=document.getElementById('lbImg');
+const lbClose=document.getElementById('lbClose');
 
-function showLightboxImage(){
-  lbImg.src = slides[idx];
-  lbCaption.textContent = slides.length > 1 ? `Photo ${idx+1} / ${slides.length}` : '';
-  // Preload neighbors while in lightbox too
-  preloadNeighbors(idx);
-}
-
-function openLightbox(){
-  if(!slides.length) return;
-  setPaused(true);
-  document.body.classList.add('noscroll');
+slider.onclick=()=>{
+  lbImg.src=slides[idx];
   lightbox.classList.add('open');
   lightbox.setAttribute('aria-hidden','false');
-  showLightboxImage();
-}
-
-function closeLightbox(){
+  document.body.classList.add('noscroll');
+};
+lbClose.onclick=()=>{
   lightbox.classList.remove('open');
   lightbox.setAttribute('aria-hidden','true');
   document.body.classList.remove('noscroll');
-  setPaused(false);
-}
-
-function lbGo(delta){
-  if(slides.length <= 1) return;
-  idx = (idx + delta + slides.length) % slides.length;
-  showSlide(idx);      // keep slider synced
-  showLightboxImage(); // update lightbox
-}
-
-/* open lightbox by tapping the slider (avoid opening right after a swipe) */
-let movedDuringTouch = false;
-slider.addEventListener('touchmove', () => { movedDuringTouch = true; }, { passive:true });
-slider.addEventListener('touchend',  () => { setTimeout(()=> movedDuringTouch = false, 0); }, { passive:true });
-
-slider.addEventListener('click', () => {
-  if(Math.abs(deltaX) > 8 || movedDuringTouch) return;
-  openLightbox();
-});
-
-lbClose.addEventListener('click', closeLightbox);
-lightbox.addEventListener('click', (e) => { if(e.target === lightbox) closeLightbox(); });
-
-document.addEventListener('keydown', (e) => {
+};
+lightbox.onclick=e=>{
+  if(e.target===lightbox) lbClose.onclick();
+};
+document.addEventListener('keydown',(e)=>{
   if(!lightbox.classList.contains('open')) return;
-  if(e.key === 'Escape') closeLightbox();
-  if(e.key === 'ArrowLeft') lbGo(-1);
-  if(e.key === 'ArrowRight') lbGo(1);
+  if(e.key==='Escape') lbClose.onclick();
 });
-
-lbPrev.addEventListener('click', () => lbGo(-1));
-lbNext.addEventListener('click', () => lbGo(1));
-
-/* swipe in lightbox */
-let lbStartX = 0, lbDeltaX = 0, lbDragging = false;
-function lbOnStart(x){ lbDragging = true; lbStartX = x; lbDeltaX = 0; }
-function lbOnMove(x){ if(!lbDragging) return; lbDeltaX = x - lbStartX; }
-function lbOnEnd(){
-  if(!lbDragging) return;
-  lbDragging = false;
-  const threshold = Math.max(50, Math.floor(window.innerWidth * 0.12));
-  if(lbDeltaX <= -threshold) lbGo(1);
-  else if(lbDeltaX >= threshold) lbGo(-1);
-  lbDeltaX = 0;
-}
-lbImg.addEventListener('touchstart', (e) => lbOnStart(e.touches[0].clientX), { passive:true });
-lbImg.addEventListener('touchmove',  (e) => lbOnMove(e.touches[0].clientX),  { passive:true });
-lbImg.addEventListener('touchend',   () => lbOnEnd(), { passive:true });
-
-/* prevent drag ghost */
-lbImg.addEventListener('dragstart', (e) => e.preventDefault());
-slideImg.addEventListener('dragstart', (e) => e.preventDefault());
 
 /* ===== Kick off ===== */
 updateAge();
-setInterval(updateAge, 30000);
-popBalloons(12);
+setInterval(updateAge,30000);
 loadSlides();
 </script>
 </body>
