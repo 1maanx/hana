@@ -4,401 +4,208 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>🌟 Hana's Journey 🌟</title>
+
   <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet" />
+
   <style>
     :root {
-      --bg1: #a3e4d7;
-      --bg2: #d1f2eb;
-      --card: #f7f9f9;
-      --ink: #2c3e50;
-      --accent: #148f77;
-      --soft: #e8f8f5;
-      --pill: #d6efe9;
+      --bg1:#a3e4d7; --bg2:#d1f2eb; --card:#f7f9f9;
+      --ink:#2c3e50; --accent:#148f77;
+      --soft:#e8f8f5; --pill:#d6efe9;
     }
 
-    * { box-sizing: border-box; }
-
-    body {
-      font-family: 'Quicksand', 'Comic Neue', cursive;
-      min-height: 100vh;
-      margin: 0;
-      display: grid;
-      place-items: center;
-      background: linear-gradient(135deg, var(--bg1), var(--bg2));
-      overflow-x: hidden;
+    *{box-sizing:border-box}
+    body{
+      margin:0; min-height:100vh;
+      display:grid; place-items:center;
+      font-family:'Quicksand','Comic Neue',cursive;
+      background:linear-gradient(135deg,var(--bg1),var(--bg2));
     }
 
-    .container {
-      width: min(480px, 92vw);
-      background: var(--card);
-      border-radius: 22px;
-      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.15);
-      padding: 2.2rem 1.6rem;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-      border: 2px solid #ecf9f6;
+    .container{
+      width:min(480px,92vw);
+      background:var(--card);
+      padding:2.2rem 1.6rem;
+      border-radius:22px;
+      text-align:center;
+      box-shadow:0 10px 24px rgba(0,0,0,.15);
+      border:2px solid #ecf9f6;
     }
 
-    h1 {
-      font-size: clamp(1.6rem, 3.4vw + 1rem, 2.2rem);
-      color: var(--accent);
-      margin: 0 0 0.5rem;
-      text-shadow: 0 1px 0 rgba(0,0,0,0.06);
+    h1{margin:0 0 .4rem;color:var(--accent)}
+    .meta{margin:0 0 .6rem;color:var(--ink)}
+    .badge{
+      display:inline-flex;gap:.4rem;
+      padding:.35rem .7rem;
+      border-radius:999px;
+      background:var(--pill);
+      font-weight:600;color:var(--accent);
     }
 
-    .meta {
-      color: var(--ink);
-      font-size: 1.05rem;
-      margin-bottom: 0.75rem;
+    /* Slider */
+    .slider{
+      margin:1rem auto;
+      width:100%; aspect-ratio:4/3;
+      border-radius:18px;
+      overflow:hidden;
+      background:#eefaf7;
+      box-shadow:0 6px 16px rgba(0,0,0,.12);
+      position:relative;
+    }
+    .slider img{
+      width:100%; height:100%;
+      object-fit:cover;
+      transition:opacity .45s ease;
+      display:block;
     }
 
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: .5rem;
-      padding: .35rem .7rem;
-      border-radius: 999px;
-      background: var(--pill);
-      font-weight: 600;
-      font-size: .95rem;
-      color: var(--accent);
+    #result,#subresult{
+      margin-top:1rem;
+      padding:1rem;
+      background:var(--soft);
+      border-radius:12px;
+      font-weight:700;
+      color:var(--ink);
+    }
+    #result{font-size:1.35rem}
+    #subresult{font-size:1.1rem;opacity:.95}
+    .big{font-size:2rem}
+
+    .progress{margin-top:1rem;text-align:left}
+    .progress-label{font-size:.9rem;margin-bottom:.35rem}
+    .bar{
+      height:12px;
+      background:#e9f7f3;
+      border-radius:999px;
+      overflow:hidden;
+    }
+    .bar span{
+      height:100%; display:block;
+      background:linear-gradient(90deg,#8fd3c6,#55c6b0);
+      width:0%; transition:width .8s ease;
     }
 
-    /* 🌸 Responsive slider */
-    .slider {
-      margin: 1rem auto 0.2rem;
-      width: 100%;
-      aspect-ratio: 4 / 3;
-      border-radius: 18px;
-      overflow: hidden;
-      background: #eefaf7;
-      box-shadow: 0 6px 16px rgba(0,0,0,.12);
-      position: relative;
+    /* Balloons */
+    .balloons{position:fixed;inset:0;pointer-events:none}
+    .balloon{
+      position:absolute;bottom:-120px;
+      font-size:26px;opacity:.85;
     }
-    .slider img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-      opacity: 1;
-      transition: opacity .45s ease;
-    }
-    .slider .hint {
-      position: absolute;
-      left: 10px;
-      bottom: 10px;
-      padding: .35rem .55rem;
-      border-radius: 999px;
-      background: rgba(255,255,255,.78);
-      color: #0d695c;
-      font-weight: 700;
-      font-size: .85rem;
-      backdrop-filter: blur(4px);
+    @keyframes rise{
+      to{transform:translateY(-110vh);opacity:1}
     }
 
-    #result, #subresult {
-      margin-top: 1rem;
-      font-weight: 700;
-      color: var(--ink);
-      background: var(--soft);
-      padding: 1rem;
-      border-radius: 12px;
-      animation: fadeIn .6s ease-out both;
-    }
-
-    #result { font-size: 1.35rem; }
-    #subresult { font-size: 1.1rem; opacity: .95; }
-
-    .big { font-size: 2rem; letter-spacing: .5px; }
-
-    .progress {
-      margin-top: 1rem;
-      text-align: left;
-    }
-    .progress-label { font-size: .9rem; color: #456; margin-bottom: .35rem; }
-    .bar {
-      height: 12px;
-      border-radius: 999px;
-      background: #e9f7f3;
-      overflow: hidden;
-    }
-    .bar > span {
-      display: block;
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, #8fd3c6, #55c6b0);
-      transition: width .8s ease-in-out;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Floating balloons */
-    .balloons { position: fixed; inset: 0; pointer-events: none; overflow: hidden; }
-    .balloon { position: absolute; bottom: -120px; font-size: 26px; filter: drop-shadow(0 6px 6px rgba(0,0,0,.12)); opacity: .85;}
-    @keyframes rise {
-      to { transform: translateY(-110vh) rotate(6deg); opacity: .95; }
-    }
-
-    /* Cute button */
-    .toggle {
-      margin-top: .9rem;
-      border: 0;
-      padding: .7rem 1rem;
-      border-radius: 999px;
-      background: #bfeee4;
-      color: #0d695c;
-      font-weight: 700;
-      cursor: pointer;
-      transition: transform .12s ease;
-    }
-    .toggle:active { transform: scale(.98); }
-
-    @media (max-width: 600px) {
-      #result { font-size: 1.2rem; }
-      #subresult { font-size: 1rem; }
-      .slider { border-radius: 16px; }
+    @media(max-width:600px){
+      #result{font-size:1.2rem}
+      #subresult{font-size:1rem}
     }
   </style>
 </head>
 <body>
-  <div class="balloons" aria-hidden="true" id="balloons"></div>
 
-  <main class="container" role="main" aria-live="polite">
-    <h1>🌟 Hana's Journey 🌟</h1>
-    <p class="meta">Hana's birthdate: <strong>17:35, 29/01/2025</strong> 💕</p>
-    <span class="badge" id="nowBadge" title="Your device's local time">⏰ Now: <span id="nowText">—</span></span>
+<div class="balloons" id="balloons"></div>
 
-    <!-- 🖼️ Auto slider (reads slides.json) -->
-    <div class="slider" aria-label="Hana photo memories">
-      <img id="slideImage" alt="Hana memory" loading="lazy" decoding="async">
-      <div class="hint" id="sliderHint" hidden>⏸ paused</div>
-    </div>
+<main class="container">
+  <h1>🌟 Hana's Journey 🌟</h1>
+  <p class="meta">Hana's birthdate: <strong>17:35, 29/01/2025</strong> 💕</p>
+  <span class="badge">⏰ Now: <span id="nowText">—</span></span>
 
-    <div id="result">Calculating…</div>
-    <div id="subresult"></div>
+  <!-- Slider -->
+  <div class="slider">
+    <img id="slideImage" alt="Hana memory" loading="lazy">
+  </div>
 
-    <div class="progress">
-      <div class="progress-label" id="progressLabel">Progress to next month: 0%</div>
-      <div class="bar"><span id="barFill"></span></div>
-    </div>
+  <div id="result">Calculating…</div>
+  <div id="subresult"></div>
 
-    <button class="toggle" id="toggleMode" aria-pressed="false">✨ Toggle: days ↔ months</button>
-  </main>
+  <div class="progress">
+    <div class="progress-label" id="progressLabel"></div>
+    <div class="bar"><span id="barFill"></span></div>
+  </div>
+</main>
 
-  <script>
-    // 🎂 Set Hana's birth moment (Asia/Ho_Chi_Minh = UTC+07:00)
-    const birth = new Date('2025-01-29T17:35:00+07:00');
+<script>
+/* ===== Date logic ===== */
+const birth = new Date('2025-01-29T17:35:00+07:00');
+const nowText = document.getElementById('nowText');
+const resultDiv = document.getElementById('result');
+const subDiv = document.getElementById('subresult');
+const barFill = document.getElementById('barFill');
+const progressLabel = document.getElementById('progressLabel');
 
-    const resultDiv = document.getElementById('result');
-    const subDiv = document.getElementById('subresult');
-    const nowText = document.getElementById('nowText');
-    const barFill = document.getElementById('barFill');
-    const progressLabel = document.getElementById('progressLabel');
-    const toggleBtn = document.getElementById('toggleMode');
+const pad = n => String(n).padStart(2,'0');
+const daysBetween=(a,b)=>Math.floor((b-a)/86400000);
 
-    let showDaysPrimary = true;
+function monthsAndDays(from,to){
+  let y=to.getFullYear(), m=to.getMonth();
+  let months=(y-from.getFullYear())*12+(m-from.getMonth());
+  let days=to.getDate()-from.getDate();
+  if(days<0){
+    months--;
+    const prev=new Date(y,m,0);
+    days=prev.getDate()+days;
+  }
+  return{months,days};
+}
 
-    function pad(n) { return String(n).padStart(2, '0'); }
+function nextMonthAnniversary(base,now){
+  let y=now.getFullYear(),m=now.getMonth();
+  let d=Math.min(base.getDate(),new Date(y,m+1,0).getDate());
+  let cand=new Date(y,m,d,base.getHours(),base.getMinutes());
+  if(cand<=now) cand=new Date(y,m+1,d,base.getHours(),base.getMinutes());
+  return cand;
+}
 
-    function midnightNext(date) {
-      const d = new Date(date);
-      d.setHours(24,0,0,0);
-      return d;
-    }
+function update(){
+  const now=new Date();
+  nowText.textContent=`${pad(now.getHours())}:${pad(now.getMinutes())}, ${pad(now.getDate())}/${pad(now.getMonth()+1)}/${now.getFullYear()}`;
 
-    function daysBetween(a, b) {
-      const ms = b - a;
-      return Math.floor(ms / 86400000); // ms per day
-    }
+  const totalDays=daysBetween(birth,now);
+  const {months,days}=monthsAndDays(birth,now);
 
-    // Calculate months + remaining days (calendar-aware-ish)
-    function monthsAndDays(fromDate, toDate) {
-      let start = new Date(fromDate.getFullYear(), fromDate.getMonth(), fromDate.getDate());
-      let end = new Date(toDate.getFullYear(), toDate.getMonth(), toDate.getDate());
+  resultDiv.innerHTML=`Hana is <span class="big">${totalDays}</span> days old! 🎈`;
+  subDiv.innerHTML=`That's <strong>${months}</strong> months and <strong>${days}</strong> days. 🧸`;
 
-      let months = (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth());
+  const next=nextMonthAnniversary(birth,now);
+  const prev=new Date(next); prev.setMonth(prev.getMonth()-1);
+  const pct=Math.round(((now-prev)/(next-prev))*100);
+  barFill.style.width=pct+'%';
+  progressLabel.textContent=`Progress to next month: ${pct}%`;
+}
 
-      if (end.getDate() < start.getDate()) {
-        months -= 1;
-        const anchorDay = Math.min(start.getDate(), new Date(end.getFullYear(), end.getMonth(), 0).getDate());
-        const anchor = new Date(end.getFullYear(), end.getMonth() - 1, anchorDay);
-        const days = daysBetween(anchor, end);
-        return { months, days };
-      } else {
-        const days = end.getDate() - start.getDate();
-        return { months, days };
-      }
-    }
+/* ===== Slider ===== */
+const slideImg=document.getElementById('slideImage');
+let slides=[],idx=0;
 
-    function formatNow(now) {
-      return `${pad(now.getHours())}:${pad(now.getMinutes())}, ${pad(now.getDate())}/${pad(now.getMonth()+1)}/${now.getFullYear()}`;
-    }
+async function loadSlides(){
+  try{
+    const r=await fetch('./slides.json',{cache:'no-store'});
+    slides=await r.json();
+    slideImg.src=slides[0];
+    setInterval(()=>{idx=(idx+1)%slides.length;slideImg.style.opacity=0;
+      setTimeout(()=>{slideImg.src=slides[idx];slideImg.style.opacity=1},200);
+    },4000);
+  }catch{
+    slideImg.src='images/slides/placeholder.jpg';
+  }
+}
 
-    function nextMonthAnniversary(base, now) {
-      let y = now.getFullYear();
-      let m = now.getMonth();
-      let targetDay = base.getDate();
-      let targetHour = base.getHours();
-      let targetMin = base.getMinutes();
+/* ===== Balloons ===== */
+const wrap=document.getElementById('balloons');
+function pop(count=10){
+  for(let i=0;i<count;i++){
+    const b=document.createElement('span');
+    b.className='balloon';
+    b.textContent=['🎈','💖','🧸','🎀'][Math.random()*4|0];
+    b.style.left=Math.random()*100+'vw';
+    b.style.animation=`rise ${5+Math.random()*5}s linear forwards`;
+    wrap.appendChild(b);
+    setTimeout(()=>b.remove(),7000);
+  }
+}
 
-      let cand = new Date(y, m, Math.min(targetDay, new Date(y, m+1, 0).getDate()), targetHour, targetMin, 0, 0);
-      if (cand <= now) {
-        m += 1;
-        y = y + Math.floor(m / 12);
-        m = m % 12;
-        cand = new Date(y, m, Math.min(targetDay, new Date(y, m+1, 0).getDate()), targetHour, targetMin, 0, 0);
-      }
-      return cand;
-    }
-
-    function update() {
-      const now = new Date();
-      nowText.textContent = formatNow(now);
-
-      const totalDays = daysBetween(birth, now);
-      const { months, days } = monthsAndDays(birth, now);
-
-      const lineDays = `Hana is <span class="big">${totalDays}</span> days old! 🎈`;
-      const lineMonths = `That's <strong>${months}</strong> months and <strong>${days}</strong> days. 🧸`;
-
-      if (totalDays < 0) {
-        resultDiv.textContent = 'Oops, the birthdate seems invalid! 😜';
-        subDiv.textContent = '';
-      } else {
-        if (showDaysPrimary) {
-          resultDiv.innerHTML = lineDays;
-          subDiv.innerHTML = lineMonths;
-        } else {
-          resultDiv.innerHTML = lineMonths;
-          subDiv.innerHTML = lineDays;
-        }
-      }
-
-      // Progress bar to next month milestone (same day-of-month & time)
-      const nextAnniv = nextMonthAnniversary(birth, now);
-      const prevAnniv = new Date(nextAnniv);
-      prevAnniv.setMonth(prevAnniv.getMonth() - 1);
-
-      const span = nextAnniv - prevAnniv;
-      const passed = now - prevAnniv;
-      const pct = Math.max(0, Math.min(100, Math.round((passed / span) * 100)));
-
-      barFill.style.width = pct + '%';
-      progressLabel.textContent = `Progress to next month: ${pct}%`;
-    }
-
-    // Toggle primary/secondary display
-    toggleBtn.addEventListener('click', () => {
-      const pressed = toggleBtn.getAttribute('aria-pressed') === 'true';
-      toggleBtn.setAttribute('aria-pressed', String(!pressed));
-      showDaysPrimary = !showDaysPrimary;
-      update();
-      popBalloons(6);
-      nextSlide(); // also change slide when toggling
-    });
-
-    // 🎈 Simple floating balloons for celebrations
-    const balloonWrap = document.getElementById('balloons');
-    function popBalloons(count = 10) {
-      for (let i = 0; i < count; i++) {
-        const b = document.createElement('span');
-        b.className = 'balloon';
-        b.style.left = Math.random() * 100 + 'vw';
-        b.style.animation = `rise ${5 + Math.random() * 6}s ease-in forwards`;
-        b.textContent = ['🎈','🎀','💚','💛','💖','🧸'][Math.floor(Math.random()*6)];
-        balloonWrap.appendChild(b);
-        setTimeout(() => b.remove(), 7000);
-      }
-    }
-
-    // =========================
-    // 🖼️ Auto Slider (GitHub Pages friendly)
-    // - It loads a list from ./slides.json
-    // - slides.json is auto-generated by GitHub Actions when you push images
-    // =========================
-    const slideImg = document.getElementById('slideImage');
-    const sliderHint = document.getElementById('sliderHint');
-
-    let slides = [];
-    let slideIndex = 0;
-    let slideTimer = null;
-    let paused = false;
-
-    async function loadSlides() {
-      try {
-        const res = await fetch('./slides.json', { cache: 'no-store' });
-        if (!res.ok) throw new Error('slides.json not found');
-        const data = await res.json();
-
-        if (!Array.isArray(data) || data.length === 0) {
-          throw new Error('slides.json is empty');
-        }
-
-        slides = data;
-        slideIndex = 0;
-        slideImg.src = slides[0];
-        startSlider();
-      } catch (e) {
-        // If you haven't set up slides.json yet, show a friendly fallback
-        console.warn(e);
-        slideImg.src = 'images/slides/placeholder.jpg';
-      }
-    }
-
-    function showSlide(i) {
-      if (!slides.length) return;
-      slideImg.style.opacity = '0';
-      setTimeout(() => {
-        slideImg.src = slides[i];
-        slideImg.onload = () => { slideImg.style.opacity = '1'; };
-      }, 180);
-    }
-
-    function nextSlide() {
-      if (paused || slides.length <= 1) return;
-      slideIndex = (slideIndex + 1) % slides.length;
-      showSlide(slideIndex);
-    }
-
-    function startSlider() {
-      if (slideTimer) clearInterval(slideTimer);
-      slideTimer = setInterval(nextSlide, 4000);
-    }
-
-    function setPaused(state) {
-      paused = state;
-      sliderHint.hidden = !paused;
-      if (paused) {
-        if (slideTimer) clearInterval(slideTimer);
-      } else {
-        startSlider();
-      }
-    }
-
-    // Pause interactions (mobile + desktop)
-    slideImg.addEventListener('touchstart', () => setPaused(true), { passive: true });
-    slideImg.addEventListener('touchend', () => setPaused(false), { passive: true });
-    slideImg.addEventListener('mouseenter', () => setPaused(true));
-    slideImg.addEventListener('mouseleave', () => setPaused(false));
-
-    // Kick things off
-    update();
-    setInterval(update, 30000);
-    popBalloons(12);
-
-    // Refresh after midnight once (optional)
-    const msToMidnight = midnightNext(new Date()) - new Date();
-    setTimeout(() => {
-      update();
-      setInterval(update, 24 * 60 * 60 * 1000);
-    }, msToMidnight + 1000);
-
-    // Load slides list
-    loadSlides();
-  </script>
+update(); loadSlides(); pop(12);
+setInterval(update,30000);
+</script>
 </body>
 </html>
